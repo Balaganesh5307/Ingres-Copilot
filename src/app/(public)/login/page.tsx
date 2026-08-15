@@ -1,19 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Activity, Loader2 } from "lucide-react";
+import { Activity, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,9 +36,20 @@ export default function LoginPage() {
     // Mock login delay
     setTimeout(() => {
       setIsLoading(false);
-      // Here we would normally redirect to dashboard
-      alert("Mock Login Successful!");
+      router.push("/dashboard");
     }, 1500);
+  };
+
+  const handleDemoAccess = () => {
+    setError("");
+    setIsDemoLoading(true);
+    setEmail("agent.smith@gov.water.org");
+    setPassword("password123");
+    
+    setTimeout(() => {
+      setIsDemoLoading(false);
+      router.push("/dashboard");
+    }, 1000);
   };
 
   return (
@@ -101,9 +115,29 @@ export default function LoginPage() {
                 </motion.div>
               )}
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 mt-4" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 mt-4" disabled={isLoading || isDemoLoading}>
                 {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 {isLoading ? "Authenticating..." : "Sign In"}
+              </Button>
+
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border/50" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or</span>
+                </div>
+              </div>
+
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full border-primary/30 hover:bg-primary/5 text-primary" 
+                onClick={handleDemoAccess}
+                disabled={isLoading || isDemoLoading}
+              >
+                {isDemoLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                {isDemoLoading ? "Preparing Demo..." : "Quick Demo Access"}
               </Button>
             </form>
           </CardContent>
