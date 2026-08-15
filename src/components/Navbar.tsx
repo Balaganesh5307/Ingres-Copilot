@@ -23,8 +23,9 @@ export function Navbar() {
         </Link>
         
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
-          <Link href="/#architecture" className="hover:text-primary transition-colors">Architecture</Link>
+          <Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
+          <Link href="/assistant" className="hover:text-primary transition-colors">AI Assistant</Link>
+          <Link href="/analytics" className="hover:text-primary transition-colors">Analytics</Link>
         </nav>
 
         <div className="flex items-center gap-4">
