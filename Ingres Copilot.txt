@@ -1,0 +1,421 @@
+Ingres Copilot: AI Groundwater Intelligence Assistant
+AI-Powered Groundwater Intelligence Assistant for INGRES
+
+SIH25066 – Ministry of Jal Shakti
+
+1. Executive Summary
+
+Ingres Copilot is an AI-powered virtual assistant designed for the India Ground Water Resource Estimation System (INGRES). The platform enables users to access groundwater assessment data, historical records, technical reports, guidelines, and scientific insights through natural language conversations instead of manually searching through large documents and datasets.
+
+The platform combines:
+
+Large Language Models (LLMs)
+Retrieval Augmented Generation (RAG)
+Groundwater Knowledge Intelligence
+Interactive Analytics
+Explainable AI
+Source-Based Responses
+
+to create an intelligent decision-support ecosystem for government officials, hydrogeologists, researchers, planners, policymakers, students, and citizens.
+
+2. Problem Statement
+
+The Ministry of Jal Shakti publishes groundwater assessment data and reports through INGRES. The platform contains extensive groundwater-related information, including assessment reports, historical datasets, technical manuals, and resource statistics.
+
+However, users face several challenges:
+
+Large volume of groundwater reports
+Complex hydrogeological terminology
+Difficulty accessing historical records
+Time-consuming manual searches
+Lack of conversational access to information
+Limited accessibility for non-technical users
+Dependence on support personnel
+
+As a result, valuable groundwater information remains underutilized and difficult to access efficiently.
+
+3. Proposed Solution
+
+Develop an AI-powered virtual assistant capable of:
+
+Understanding natural language questions
+Retrieving groundwater information from INGRES
+Answering queries with source citations
+Generating summaries from technical reports
+Visualizing groundwater trends and statistics
+Explaining complex groundwater concepts in simple language
+Assisting users with intelligent data exploration
+
+The platform transforms INGRES from a static repository into an intelligent groundwater knowledge ecosystem.
+
+4. Project Vision
+Current System
+User
+ ↓
+Search Reports
+ ↓
+Open PDF Files
+ ↓
+Find Relevant Data
+ ↓
+Analyze Information
+ ↓
+Make Decisions
+Proposed System
+User
+ ↓
+Ask Question
+ ↓
+Ingres Copilot
+ ↓
+Groundwater Intelligence Engine
+ ↓
+Instant Verified Answer
+ ↓
+Insights & Visualization
+5. Target Users
+Primary Users
+Ministry of Jal Shakti
+Central Ground Water Board (CGWB)
+State Water Resource Departments
+Hydrogeologists
+Researchers
+Policy Makers
+Secondary Users
+Students
+NGOs
+Environmental Agencies
+Farmers
+General Public
+6. Unique Project Idea
+Most Teams Will Build
+Chatbot
++
+PDF Search
++
+Basic RAG
+We Will Build
+AI Groundwater Intelligence Platform
+AI Assistant
++
+Groundwater Knowledge Search
++
+Interactive Groundwater Dashboard
++
+India Groundwater Mapping
++
+Historical Data Analytics
++
+Report Summarization
++
+Explainable Responses with Citations
+7. Core Features
+Feature 1: AI Groundwater Assistant
+
+Natural language question answering using INGRES groundwater knowledge.
+
+Feature 2: Historical Data Retrieval
+
+Access and compare groundwater information across multiple years.
+
+Feature 3: Groundwater Analytics Dashboard
+
+Displays:
+
+Groundwater Recharge
+Groundwater Extraction
+Net Groundwater Availability
+Annual Trends
+District Rankings
+State Rankings
+Feature 4: Interactive India Groundwater Map
+
+Displays:
+
+Safe Areas
+Semi-Critical Areas
+Critical Areas
+Over-Exploited Areas
+Feature 5: Smart Visualization Generator
+
+Automatically generates:
+
+Charts
+Trends
+Comparative Analysis
+Visual Reports
+Feature 6: Groundwater Report Summarizer
+
+Generate:
+
+Executive Summary
+Key Findings
+Important Insights
+Recommendations
+Feature 7: Explain Technical Concepts
+
+Simplifies technical hydrogeological terminology for non-technical users.
+
+8. Advanced Roadmap Features
+Future Enhancement 1: Voice Interaction
+
+Speech-based groundwater queries and responses.
+
+Future Enhancement 2: Multilingual Groundwater Assistant
+
+Support regional Indian languages.
+
+Future Enhancement 3: Smart Monitoring & Alert System
+
+Detect category changes:
+
+Safe → Semi-Critical
+Semi-Critical → Critical
+Critical → Over-Exploited
+Future Enhancement 4: Scenario-Based Trend Analysis
+
+Historical trend-based groundwater projections.
+
+9. Technology Stack
+Frontend
+Next.js 15
+TypeScript
+Tailwind CSS
+Shadcn/UI
+Framer Motion
+Backend
+FastAPI
+Python
+Database
+MongoDB Atlas
+AI Layer
+Groq API (Primary LLM)
+Llama 3.3 70B
+Gemini 2.5 Flash (Fallback)
+LangChain
+LangGraph
+Vector Database
+ChromaDB
+Maps
+Leaflet.js
+OpenStreetMap
+Charts
+Recharts
+Deployment
+Vercel
+Render
+10. System Architecture
+User
+ │
+ ▼
+Next.js Frontend
+ │
+ ▼
+FastAPI Backend
+ │
+ ├── Authentication Service
+ ├── Chat Engine
+ ├── Analytics Engine
+ │
+ ▼
+LangGraph Agent
+ │
+ ├── RAG Engine
+ ├── Analytics Engine
+ ├── Visualization Engine
+ ├── Citation Engine
+ │
+ ▼
+ChromaDB
+ │
+ ▼
+Groundwater Reports & INGRES Data
+ │
+ ▼
+Groq API (Llama 3.3 70B)
+ │
+ ▼
+Gemini 2.5 Flash (Fallback)
+ │
+ ▼
+Verified Response + Citations
+11. Database Design
+Users Collection
+{
+  "name": "",
+  "email": "",
+  "role": "",
+  "createdAt": ""
+}
+Roles
+Admin
+Manage users
+Upload reports
+Manage datasets
+View analytics
+Review feedback
+Researcher
+Historical analysis
+Data exploration
+Report generation
+Comparative studies
+Government Officer
+District monitoring
+State monitoring
+Groundwater assessment review
+Decision support
+Public User
+Ask questions
+Search groundwater information
+Explore reports
+Learn groundwater concepts
+Prototype Note
+
+For the SIH prototype, all roles will primarily have read-only access. Role-based permissions are included for future scalability.
+
+Documents Collection
+{
+  "title": "",
+  "source": "",
+  "year": "",
+  "state": "",
+  "district": "",
+  "block": "",
+  "category": "",
+  "assessmentData": {
+    "annualRecharge": 0,
+    "annualExtraction": 0,
+    "netGroundwaterAvailability": 0,
+    "stageOfExtraction": 0,
+    "category": "",
+    "assessmentYear": ""
+  },
+  "chunks": []
+}
+Chat History Collection
+{
+  "userId": "",
+  "question": "",
+  "answer": "",
+  "timestamp": ""
+}
+Feedback Collection
+{
+  "queryId": "",
+  "rating": "",
+  "comment": ""
+}
+12. Environment Variables
+MONGODB_URI=
+
+
+GROQ_API_KEY=
+GEMINI_API_KEY=
+
+
+JWT_SECRET=
+
+
+NEXT_PUBLIC_API_URL=
+
+
+CHROMA_DB_PATH=./chroma_db
+13. Development Roadmap
+Phase 0 – Data Assessment & Preparation
+Activities
+Collect CGWB groundwater reports
+Analyze INGRES datasets
+Extract state-wise groundwater data
+Extract district-wise groundwater data
+Extract block-wise groundwater data
+Create structured datasets
+Validate and clean data
+Prepare documents for RAG ingestion
+Deliverables
+Structured groundwater dataset
+Groundwater document repository
+RAG-ready document collection
+Phase 0 Completion Criteria
+✓ Groundwater assessment data available for 2018–2024
+✓ District-level data extracted successfully
+✓ Block-level data extracted where available
+✓ Category labels mapped:
+Safe
+Semi-Critical
+Critical
+Over-Exploited
+✓ Dataset converted into JSON/CSV format
+✓ Dashboard-ready dataset prepared
+Week 1 – Foundation Setup
+Authentication System
+User Management
+Next.js Setup
+FastAPI Setup
+MongoDB Integration
+Groq Integration
+Basic Chat Interface
+Week 2 – Knowledge Engine
+RAG Pipeline
+ChromaDB Setup
+Document Chunking
+Embedding Generation
+Citation Engine
+Groundwater Knowledge Base
+Week 3 – Analytics Foundation
+Groundwater Data Processing
+Analytics Dashboard
+State-Level Analytics
+District-Level Analytics
+Basic India Groundwater Map
+Week 4 – Visualization & Intelligence
+Advanced Map Visualizations
+Groundwater Report Summarizer
+Smart Visualization Generator
+UI/UX Polish
+Performance Optimization
+Week 5 – Testing & Deployment
+System Testing
+Bug Fixes
+Security Validation
+Deployment
+SIH Demo Preparation
+14. Expected Outcomes
+Faster groundwater information access
+Reduced manual search effort
+Improved accessibility
+Better decision-making support
+Increased utilization of groundwater data
+Enhanced public awareness
+Improved groundwater resource management
+15. Future Roadmap
+Voice Interaction
+Multilingual Support
+Smart Monitoring Alerts
+Scenario-Based Trend Analysis
+Mobile Application
+Advanced Data Visualization
+16. Competitive Advantages
+Traditional INGRES
+Manual searching
+PDF-based access
+Difficult report analysis
+Time-consuming retrieval
+Ingres Copilot
+Natural language querying
+Instant answers with citations
+Historical data analytics
+Interactive groundwater mapping
+AI-powered report summarization
+Explainable responses
+Intelligent visualizations
+17. Expected Impact
+Government Agencies
+Faster access to groundwater intelligence
+Better policy support
+Reduced manual effort
+Researchers
+Simplified historical analysis
+Better groundwater insights
+Citizens
+Easier understanding of groundwater conditions
+Improved awareness of water resource management
