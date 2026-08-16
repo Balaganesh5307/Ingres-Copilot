@@ -2,6 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,6 +19,19 @@ const activityHistory = [
 ];
 
 export default function ProfilePage() {
+  const { currentUser, logout, isLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if (isLoading || !currentUser) {
+    return <div className="container mx-auto p-8">Loading profile...</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="mb-8 flex justify-between items-center">
@@ -23,11 +39,9 @@ export default function ProfilePage() {
           <h1 className="text-3xl font-bold tracking-tight">Profile & Settings</h1>
           <p className="text-muted-foreground mt-1">Manage your account and preferences.</p>
         </div>
-        <Link href="/login">
-          <Button variant="destructive" className="bg-destructive/20 text-red-400 hover:bg-destructive/30 border border-destructive/50">
-            <LogOut className="w-4 h-4 mr-2" /> Sign Out
-          </Button>
-        </Link>
+        <Button onClick={logout} variant="destructive" className="bg-destructive/20 text-red-400 hover:bg-destructive/30 border border-destructive/50">
+          <LogOut className="w-4 h-4 mr-2" /> Sign Out
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -40,17 +54,17 @@ export default function ProfilePage() {
                 <AvatarImage src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
                 <AvatarFallback><User className="w-10 h-10 text-muted-foreground" /></AvatarFallback>
               </Avatar>
-              <h2 className="text-xl font-bold">Agent Smith</h2>
+              <h2 className="text-xl font-bold">{currentUser.name || "Unknown User"}</h2>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mt-2 border border-primary/20">
-                <ShieldCheck className="w-3.5 h-3.5" /> Government Official
+                <ShieldCheck className="w-3.5 h-3.5" /> {currentUser.role}
               </div>
               
               <div className="w-full mt-6 space-y-3 text-sm text-left">
                 <div className="flex items-center gap-3 text-muted-foreground">
-                  <Mail className="w-4 h-4" /> agent.smith@gov.water.org
+                  <Mail className="w-4 h-4" /> {currentUser.email}
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
-                  <Building className="w-4 h-4" /> Dept of Water Resources
+                  <Clock className="w-4 h-4" /> Joined: {currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : "N/A"}
                 </div>
               </div>
 

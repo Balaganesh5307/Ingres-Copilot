@@ -9,16 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Activity, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login: contextLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -33,23 +35,34 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
-    // Mock login delay
-    setTimeout(() => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.detail || "Login failed");
+      }
+      
+      contextLogin(data.access_token, {
+        id: data.user_id,
+        name: "", // Will be fetched via /me shortly or context refresh
+        email,
+        role: data.role
+      });
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setIsLoading(false);
-      router.push("/dashboard");
-    }, 1500);
+    }
   };
 
   const handleDemoAccess = () => {
-    setError("");
-    setIsDemoLoading(true);
-    setEmail("agent.smith@gov.water.org");
-    setPassword("password123");
-    
-    setTimeout(() => {
-      setIsDemoLoading(false);
-      router.push("/dashboard");
-    }, 1000);
+    setError("Demo access disabled. Please register an account.");
   };
 
   return (
