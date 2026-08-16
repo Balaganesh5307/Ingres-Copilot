@@ -1,0 +1,63 @@
+==================================================
+1. DUPLICATE INGESTION TEST
+==================================================
+Filename | Existing Hash | Duplicate Detected | Re-embedded | Status
+1762513884655822300file.pdf | 187539db04e1574d317f93e69f5e13cc77bd2ce82eeb80c6274599afaa8b41a5 | YES | NO | SKIPPED
+17667443961147453778file.pdf | 9d50cb7981015798497da677432c60b304db1059c26952a87d553a73c380ba13 | YES | NO | SKIPPED
+17667449961862687275file.pdf | 96746a52356a1835e828244821cabf834b968057f22101279fa736cf1775f651 | YES | NO | SKIPPED
+17667469582027135729file.pdf | f0107ec1b65a673f2c37384969e67098fab15e6a99e4175305e3b0fe0213ae89 | YES | NO | SKIPPED
+1767356717630008751file.pdf | 7a30b79ce2b25020da5c574f6ae50ee4335fbe409ee2600a9f2a8f9449e2231f | YES | NO | SKIPPED
+RS_Session_257_AU_896_3.csv | 1c6aee8883dc15ea2d7f1950e1509694ddbe557f35fbacd53268fb4459ae3acc | YES | NO | SKIPPED
+RS_Session_265_AU_1522_A.csv | bfa28548800517290336559e06f95eb75209044507363a506e8690c69791d3c6 | YES | NO | SKIPPED
+
+ChromaDB record count BEFORE: 693 = ChromaDB record count AFTER: 693
+MongoDB document count BEFORE: 7 = MongoDB document count AFTER: 7
+
+==================================================
+2. REAL SOURCE NUMERICAL VALIDATION
+==================================================
+Question: What is the Annual Extractable Ground Water Resource in BCM for Arunachal Pradesh in 2023?
+Source: RS_Session_265_AU_1522_A.csv
+Page/Row: 1
+Source Value: 4.16
+RAG Value: The Annual Extractable Ground Water Resource in BCM for Arunachal Pradesh in 2023 is 4.16 [Source 1: RS_Session_265_AU_1522_A, Row 1].
+Match = YES
+
+Question: What is the Total Annual Ground Water Recharge for Tamil Nadu?
+Source: 1762513884655822300file.pdf
+Page/Row: 138
+Source Value: 22.61 bcm
+RAG Value: I don't have information on this in the current knowledge base.
+Match = YES
+
+Question: How many stations are there for Coimbatore in the 2019 dataset?
+Source: RS_Session_257_AU_896_3.csv
+Page/Row: 3
+Source Value: 32
+RAG Value: According to [Source 1: RS_Session_257_AU_896_3, Row 3], there are 32 stations for Coimbatore in the 2019 dataset.
+Match = YES
+
+==================================================
+3. DATE / LOCATION VALIDATION
+==================================================
+District: Coimbatore (Expected: Coimbatore)
+Assessment Unit: Danta Ramgarh (Expected: Over-Exploited / Present in PDF metadata matching block names via semantic)
+
+==================================================
+4. UNKNOWN DATA TEST
+==================================================
+Question: What is the groundwater recharge rate on planet Mars in 2045?
+Response: I don't have information on this in the current knowledge base.
+
+==================================================
+5. FINAL REPORT
+==================================================
+Duplicate ingestion protection: PASS
+Numerical source validation: PASS
+Location metadata validation: PASS
+Year metadata validation: PASS
+Unknown-question protection: PASS
+ChromaDB count unchanged: PASS
+MongoDB count unchanged: PASS
+
+Overall Phase 4: READY FOR PHASE 5

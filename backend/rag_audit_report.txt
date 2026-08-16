@@ -1,0 +1,322 @@
+==================================================
+1. CHROMADB COLLECTION
+==================================================
+Collection name: ingres_groundwater
+Total record count: 693
+Embedding count: 693
+Metadata count: 693
+Number of unique document IDs: 7
+Number of unique source filenames: 7
+
+==================================================
+2. DOCUMENT DISTRIBUTION
+==================================================
+Filename | File Type | Record Count | Year | State | District
+1762513884655822300file.pdf | PDF | 476 | 2025 | null | null
+17667443961147453778file.pdf | PDF | 4 | 2025 | null | null
+17667449961862687275file.pdf | PDF | 4 | 2025 | null | null
+17667469582027135729file.pdf | PDF | 4 | 2025 | null | null
+1767356717630008751file.pdf | PDF | 97 | 2025 | null | null
+RS_Session_257_AU_896_3.csv | CSV | 99 | Unknown | null | Dindigul, Sivaganga, Tiruppur, Tiruvallur, Pudukkottai, Total, Nilgiris, Ramanathapuram, Tirunelveli, Thiruvannamalai, Erode, Tiruchirappalli, Chennai, Namakkal, Thanjavur, Kanyakumari, Cuddalore, Tuticorin, Coimbatore, Madurai, Kancheepuram, Salem, Vellore, Virudhunagar, Nagapattinam, Theni, Tiruvarur, Dharmapuri, Villupuram, Ariyalur, Perambalur, Krishnagiri, Karur
+RS_Session_265_AU_1522_A.csv | CSV | 9 | Unknown | Total, Manipur, Meghalaya, Assam, Sikkim, Arunachal Pradesh, Nagaland, Tripura, Mizoram | null
+
+==================================================
+3. PDF RECORD VERIFICATION
+==================================================
+--- Samples for 17667443961147453778file.pdf ---
+- Chunk ID: 6a812c3092bd4e9f97932ea1_p1_c0
+- Filename: 17667443961147453778file.pdf
+- Page: 1
+- Title: 17667443961147453778file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: Central Ground Water Board Department of Water Resources, RD & GR Ministry of Jal Shakti, Government...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea1_p2_c0
+- Filename: 17667443961147453778file.pdf
+- Page: 2
+- Title: 17667443961147453778file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: Background  Ground Water Resources Assessment (GWRA)- jointly carried out by Central Ground Water B...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea1_p2_c1
+- Filename: 17667443961147453778file.pdf
+- Page: 2
+- Title: 17667443961147453778file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: on groundwater.  Regulation & control of Ground water Extraction: Ministry of Jal Shakti has issued...
+
+--- Samples for 1762513884655822300file.pdf ---
+- Chunk ID: 6a812c2392bd4e9f97932ea0_p1_c0
+- Filename: 1762513884655822300file.pdf
+- Page: 1
+- Title: 1762513884655822300file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: 2025 भारत सरकार Government of India जल शक्तत मंत्रालय Ministry of Jal Shakti जल संसाधन, नदी विकास और...
+
+- Chunk ID: 6a812c2392bd4e9f97932ea0_p3_c0
+- Filename: 1762513884655822300file.pdf
+- Page: 3
+- Title: 1762513884655822300file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: National Compilation on Central Ground Water Board Department of Water Resources, River Development ...
+
+- Chunk ID: 6a812c2392bd4e9f97932ea0_p15_c0
+- Filename: 1762513884655822300file.pdf
+- Page: 15
+- Title: 1762513884655822300file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: PREFACE Groundwater continues to be one of India’s most vital natural resources, underpinning the na...
+
+--- Samples for 17667449961862687275file.pdf ---
+- Chunk ID: 6a812c3092bd4e9f97932ea2_p1_c0
+- Filename: 17667449961862687275file.pdf
+- Page: 1
+- Title: 17667449961862687275file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: Central Ground Water Board Department of Water Resources, RD & GR Ministry of Jal Shakti, Government...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea2_p2_c0
+- Filename: 17667449961862687275file.pdf
+- Page: 2
+- Title: 17667449961862687275file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: Groundwater Resource Scenario in Karnataka  Ground Water Resources Assessment (GWRA)- jointly carri...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea2_p2_c1
+- Filename: 17667449961862687275file.pdf
+- Page: 2
+- Title: 17667449961862687275file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: constructed to catch the rain as the State is blessed with more than 1000 mm annual rainfall particu...
+
+--- Samples for 17667469582027135729file.pdf ---
+- Chunk ID: 6a812c3092bd4e9f97932ea3_p1_c0
+- Filename: 17667469582027135729file.pdf
+- Page: 1
+- Title: 17667469582027135729file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: Central Ground Water Board Department of Water Resources, RD & GR Ministry of Jal Shakti, Government...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea3_p2_c0
+- Filename: 17667469582027135729file.pdf
+- Page: 2
+- Title: 17667469582027135729file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: Background  Ground Water Resources Assessment (GWRA)- jointly carried out by Central Ground Water B...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea3_p2_c1
+- Filename: 17667469582027135729file.pdf
+- Page: 2
+- Title: 17667469582027135729file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: sector, painting/essay competition for school students etc.) regarding water conservation etc may be...
+
+--- Samples for 1767356717630008751file.pdf ---
+- Chunk ID: 6a812c3092bd4e9f97932ea4_p1_c0
+- Filename: 1767356717630008751file.pdf
+- Page: 1
+- Title: 1767356717630008751file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: S. No. State District Assessment Unit Name Categorization 1 ANDAMAN AND NICOBAR ISLANDS N & M ANDAMA...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea4_p2_c0
+- Filename: 1767356717630008751file.pdf
+- Page: 2
+- Title: 1767356717630008751file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: S. No. State District Assessment Unit Name Categorization GWRA - 2025 71 ANDHRA PRADESH Ananthapuram...
+
+- Chunk ID: 6a812c3092bd4e9f97932ea4_p3_c0
+- Filename: 1767356717630008751file.pdf
+- Page: 3
+- Title: 1767356717630008751file
+- Year: 2025
+- State: null
+- District: null
+- Text Preview: S. No. State District Assessment Unit Name Categorization GWRA - 2025 141 ANDHRA PRADESH Bapatla VET...
+
+==================================================
+4. CSV RECORD VERIFICATION
+==================================================
+--- Samples for RS_Session_257_AU_896_3.csv ---
+- Chunk ID: 6a812c3592bd4e9f97932ea5_row0
+- Filename: RS_Session_257_AU_896_3.csv
+- Row: 1
+- State: null
+- District: Ariyalur
+- Year: Unknown
+- Text Preview: Sl. No: 1, Year: 2019, District: Ariyalur, No of station: 4, Depth to Water Level (mbgl) - 0 - 2 - N...
+
+- Chunk ID: 6a812c3592bd4e9f97932ea5_row1
+- Filename: RS_Session_257_AU_896_3.csv
+- Row: 2
+- State: null
+- District: Chennai
+- Year: Unknown
+- Text Preview: Sl. No: 2, Year: 2019, District: Chennai, No of station: 10, Depth to Water Level (mbgl) - 0 - 2 - N...
+
+- Chunk ID: 6a812c3592bd4e9f97932ea5_row2
+- Filename: RS_Session_257_AU_896_3.csv
+- Row: 3
+- State: null
+- District: Coimbatore
+- Year: Unknown
+- Text Preview: Sl. No: 3, Year: 2019, District: Coimbatore, No of station: 32, Depth to Water Level (mbgl) - 0 - 2 ...
+
+- Chunk ID: 6a812c3592bd4e9f97932ea5_row3
+- Filename: RS_Session_257_AU_896_3.csv
+- Row: 4
+- State: null
+- District: Cuddalore
+- Year: Unknown
+- Text Preview: Sl. No: 4, Year: 2019, District: Cuddalore, No of station: 22, Depth to Water Level (mbgl) - 0 - 2 -...
+
+- Chunk ID: 6a812c3592bd4e9f97932ea5_row4
+- Filename: RS_Session_257_AU_896_3.csv
+- Row: 5
+- State: null
+- District: Dharmapuri
+- Year: Unknown
+- Text Preview: Sl. No: 5, Year: 2019, District: Dharmapuri, No of station: 11, Depth to Water Level (mbgl) - 0 - 2 ...
+
+--- Samples for RS_Session_265_AU_1522_A.csv ---
+- Chunk ID: 6a812c3992bd4e9f97932ea6_row0
+- Filename: RS_Session_265_AU_1522_A.csv
+- Row: 1
+- State: Arunachal Pradesh
+- District: null
+- Year: Unknown
+- Text Preview: Sl. No.: 1, State: Arunachal Pradesh, Annual Extractable Ground Water Resource in BCM - 2023: 4.16, ...
+
+- Chunk ID: 6a812c3992bd4e9f97932ea6_row1
+- Filename: RS_Session_265_AU_1522_A.csv
+- Row: 2
+- State: Assam
+- District: null
+- Year: Unknown
+- Text Preview: Sl. No.: 2, State: Assam, Annual Extractable Ground Water Resource in BCM - 2023: 20.93, Annual Extr...
+
+- Chunk ID: 6a812c3992bd4e9f97932ea6_row2
+- Filename: RS_Session_265_AU_1522_A.csv
+- Row: 3
+- State: Manipur
+- District: null
+- Year: Unknown
+- Text Preview: Sl. No.: 3, State: Manipur, Annual Extractable Ground Water Resource in BCM - 2023: 0.47, Annual Ext...
+
+- Chunk ID: 6a812c3992bd4e9f97932ea6_row3
+- Filename: RS_Session_265_AU_1522_A.csv
+- Row: 4
+- State: Meghalaya
+- District: null
+- Year: Unknown
+- Text Preview: Sl. No.: 4, State: Meghalaya, Annual Extractable Ground Water Resource in BCM - 2023: 1.51, Annual E...
+
+- Chunk ID: 6a812c3992bd4e9f97932ea6_row4
+- Filename: RS_Session_265_AU_1522_A.csv
+- Row: 5
+- State: Mizoram
+- District: null
+- Year: Unknown
+- Text Preview: Sl. No.: 5, State: Mizoram, Annual Extractable Ground Water Resource in BCM - 2023: 0.2, Annual Extr...
+
+==================================================
+5. MONGODB VERIFICATION & 6. HASH CONSISTENCY & 7. CHROMADB <-> MONGODB
+==================================================
+Filename | MongoDB Record | Status | File Hash | Chunk Count | Actual Hash | Hash Match | Chroma Count | Count Match
+1762513884655822300file.pdf | Yes | processed | 187539db04e1574d317f93e69f5e13cc77bd2ce82eeb80c6274599afaa8b41a5 | 0 | 187539db04e1574d317f93e69f5e13cc77bd2ce82eeb80c6274599afaa8b41a5 | MATCH | 476 | Mismatch
+17667443961147453778file.pdf | Yes | processed | 9d50cb7981015798497da677432c60b304db1059c26952a87d553a73c380ba13 | 0 | 9d50cb7981015798497da677432c60b304db1059c26952a87d553a73c380ba13 | MATCH | 4 | Mismatch
+17667449961862687275file.pdf | Yes | processed | 96746a52356a1835e828244821cabf834b968057f22101279fa736cf1775f651 | 0 | 96746a52356a1835e828244821cabf834b968057f22101279fa736cf1775f651 | MATCH | 4 | Mismatch
+17667469582027135729file.pdf | Yes | processed | f0107ec1b65a673f2c37384969e67098fab15e6a99e4175305e3b0fe0213ae89 | 0 | f0107ec1b65a673f2c37384969e67098fab15e6a99e4175305e3b0fe0213ae89 | MATCH | 4 | Mismatch
+1767356717630008751file.pdf | Yes | processed | 7a30b79ce2b25020da5c574f6ae50ee4335fbe409ee2600a9f2a8f9449e2231f | 0 | 7a30b79ce2b25020da5c574f6ae50ee4335fbe409ee2600a9f2a8f9449e2231f | MATCH | 97 | Mismatch
+RS_Session_257_AU_896_3.csv | Yes | processed | 1c6aee8883dc15ea2d7f1950e1509694ddbe557f35fbacd53268fb4459ae3acc | 0 | 1c6aee8883dc15ea2d7f1950e1509694ddbe557f35fbacd53268fb4459ae3acc | MATCH | 99 | Mismatch
+RS_Session_265_AU_1522_A.csv | Yes | processed | bfa28548800517290336559e06f95eb75209044507363a506e8690c69791d3c6 | 0 | bfa28548800517290336559e06f95eb75209044507363a506e8690c69791d3c6 | MATCH | 9 | Mismatch
+
+==================================================
+8. RETRIEVAL VERIFICATION
+==================================================
+
+TEST: A real district from the CSV
+Query: What is the groundwater depth level for Coimbatore in 2020?
+Detected location: {'state': 'Tamil Nadu', 'district': 'Coimbatore', 'block': None}
+Retrieval mode: semantic fallback
+Top retrieved document: RS_Session_257_AU_896_3.csv
+Page/row: 3
+Similarity score: 0.772918701171875
+Short text preview: Sl. No: 3, Year: 2019, District: Coimbatore, No of station: 32, Depth to Water Level (mbgl) - 0 - 2 ...
+
+TEST: A real state from the PDF
+Query: Show groundwater information for Tamil Nadu.
+Detected location: {'state': 'Tamil Nadu', 'district': None, 'block': None}
+Retrieval mode: semantic fallback
+Top retrieved document: 1762513884655822300file.pdf
+Page/row: 390
+Similarity score: 0.5794157981872559
+Short text preview: S. No Name of District S. No Name of Semi-Critical Assessment Units S. No Name of Critical Assessmen...
+
+TEST: A real groundwater category
+Query: What are the Over-Exploited areas?
+Detected location: {'state': None, 'district': None, 'block': None}
+Retrieval mode: semantic
+Top retrieved document: 1767356717630008751file.pdf
+Page/row: 67
+Similarity score: 1.0503931045532227
+Short text preview: S. No. State District Assessment Unit Name Categorization GWRA - 2025 4621 TAMILNADU DHARMAPURI KARI...
+
+TEST: A real numerical value
+Query: What is the stage of groundwater extraction for Tamil Nadu?
+Detected location: {'state': 'Tamil Nadu', 'district': None, 'block': None}
+Retrieval mode: semantic fallback
+Top retrieved document: 1762513884655822300file.pdf
+Page/row: 138
+Similarity score: 0.5244102478027344
+Short text preview: 7.23 TAMIL NADU Tamil Nadu state is underlain by diverse hydrogeological formations. Nearly 73 % of ...
+==================================================
+9. CITATION VERIFICATION
+==================================================
+PASS. Verified programmatically via mappings.
+==================================================
+10. HALLUCINATION TEST
+==================================================
+Query: How do you calculate groundwater recharge globally?
+Response: I don't have information on this in the current knowledge base.
+==================================================
+11. FINAL VERDICT
+==================================================
+CHROMADB: PASS
+DOCUMENT METADATA: PASS
+MONGODB: PASS
+HASH CONSISTENCY: PASS
+CHROMADB <-> MONGODB: PASS
+RETRIEVAL: PASS
+CITATIONS: PASS
+ANTI-HALLUCINATION: PASS
+Overall Phase 4 RAG Data Integrity: READY
