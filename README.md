@@ -60,6 +60,16 @@ The backend uses a Domain-Driven (Modular) architecture using FastAPI.
 3. Configure environment variables:
    Ensure you have copied `.env.example` to `.env` in the **root of the project** and updated the MongoDB URI, JWT Secret, and GROQ_API_KEY.
 
+#### Phase 4: REAL RAG Ingestion Pipeline
+The AI Assistant uses a Retrieval-Augmented Generation (RAG) system grounded in official CGWB PDFs and CSVs. It strictly answers using retrieved context.
+1. Drop your official `.pdf` and `.csv` groundwater datasets into the `backend/ingestion/` folder.
+2. Run the batch ingestion script to build the local ChromaDB vector database:
+   ```bash
+   # Ensure you are inside the backend/ folder and the virtual environment is activated
+   python -m app.rag.ingest
+   ```
+   *Note: The system hashes files to prevent duplicate ingestion, extracts structured metadata, and embeds text locally using `sentence-transformers/all-MiniLM-L6-v2`.*
+
 ### Running Locally
 
 You need to run both the frontend and backend servers.

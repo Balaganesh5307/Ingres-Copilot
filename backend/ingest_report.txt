@@ -1,0 +1,128 @@
+1. Filename: 1762513884655822300file.pdf
+2. File type: PDF
+3. Detected document title: 1762513884655822300file.pdf
+4. Detected year: Unknown
+5. State, if detected: Unknown
+6. District, if detected: Unknown
+7. PDF page count: 482
+8. Successfully extracted pages: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+1. Filename: 17667443961147453778file.pdf
+2. File type: PDF
+3. Detected document title: 17667443961147453778file.pdf
+4. Detected year: Unknown
+5. State, if detected: Unknown
+6. District, if detected: Unknown
+7. PDF page count: 3
+8. Successfully extracted pages: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+1. Filename: 17667449961862687275file.pdf
+2. File type: PDF
+3. Detected document title: 17667449961862687275file.pdf
+4. Detected year: Unknown
+5. State, if detected: Unknown
+6. District, if detected: Unknown
+7. PDF page count: 3
+8. Successfully extracted pages: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+1. Filename: 17667469582027135729file.pdf
+2. File type: PDF
+3. Detected document title: 17667469582027135729file.pdf
+4. Detected year: Unknown
+5. State, if detected: Unknown
+6. District, if detected: Unknown
+7. PDF page count: 3
+8. Successfully extracted pages: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+1. Filename: 1767356717630008751file.pdf
+2. File type: PDF
+3. Detected document title: 1767356717630008751file.pdf
+4. Detected year: Unknown
+5. State, if detected: Unknown
+6. District, if detected: Unknown
+7. PDF page count: 97
+8. Successfully extracted pages: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+1. Filename: RS_Session_257_AU_896_3.csv
+2. File type: CSV
+3. Detected document title: RS_Session_257_AU_896_3.csv
+4. Detected year: 2019
+5. State, if detected: Unknown
+6. District, if detected: Ariyalur
+7. CSV row count: 99
+8. Successfully extracted records: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+1. Filename: RS_Session_265_AU_1522_A.csv
+2. File type: CSV
+3. Detected document title: RS_Session_265_AU_1522_A.csv
+4. Detected year: Unknown
+5. State, if detected: Arunachal Pradesh
+6. District, if detected: Unknown
+7. CSV row count: 9
+8. Successfully extracted records: 0
+9. Chunks created: 0
+10. Embeddings created: 0
+11. ChromaDB records created: 0
+12. MongoDB document record created: No
+13. Duplicate detected: Yes
+14. Final status: SKIPPED
+15. Exact error if failed: None
+--------------------------------------------------
+Total files found: 7
+PDF files: 5
+CSV files: 2
+
+Successfully ingested: 0
+Failed: 0
+Skipped as duplicates: 7
+
+Total PDF pages processed: 588
+Total CSV rows processed: 108
+Total chunks: 0
+Total embeddings: 0
+Total ChromaDB records: 0
+
+ChromaDB collection: ingres_groundwater
+Current Total ChromaDB Records in collection: 693

@@ -1,35 +1,32 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import Optional
+from datetime import datetime
 
-class AssessmentDataSchema(BaseModel):
-    annualRecharge: float
-    annualExtraction: float
-    netGroundwaterAvailability: float
-    stageOfExtraction: float
-    category: str
-    assessmentYear: str
-
-class DocumentChunkSchema(BaseModel):
-    text: str
-    page: Optional[int] = None
-    embedding: Optional[List[float]] = None
-
-class DocumentBase(BaseModel):
-    title: str
-    source: str
-    year: str
-    state: str
-    district: str
-    block: str
-    category: str
-    assessmentData: AssessmentDataSchema
-    chunks: List[DocumentChunkSchema] = []
-
-class DocumentCreate(DocumentBase):
-    pass
-
-class DocumentResponse(DocumentBase):
+class DocumentMetadataSchema(BaseModel):
     id: str = Field(alias="_id")
+    title: Optional[str] = None
+    source: str
+    filename: str
+    fileType: str # "pdf" or "csv"
+    year: Optional[str] = None
+    organization: Optional[str] = None
+    pages: int = 0
+    status: str = "pending" # pending, processing, processed, failed
+    chunkCount: int = 0
+    fileHash: str
+    ingestedAt: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
         populate_by_name = True
+
+class DocumentCreate(BaseModel):
+    title: Optional[str] = None
+    source: str = "CGWB"
+    filename: str
+    fileType: str
+    year: Optional[str] = None
+    organization: Optional[str] = "Central Ground Water Board"
+    pages: int = 0
+    status: str = "pending"
+    chunkCount: int = 0
+    fileHash: str

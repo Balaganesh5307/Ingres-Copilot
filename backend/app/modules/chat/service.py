@@ -1,25 +1,26 @@
 import json
 import uuid
 import asyncio
+import logging
 from datetime import datetime
 from groq import AsyncGroq
 from app.core.config import settings
 from app.modules.chat.repository import ChatRepository
 from app.modules.chat.schemas import ConversationCreate, Message, Citation, Conversation
+from app.core.rag import rag_core
 
-# Mock Facts as instructed
-MOCK_FACTS = """
-You are Ingres Copilot, an AI Groundwater Intelligence Assistant. 
-You must ONLY use the following facts to answer questions about groundwater. If a user asks about a location not listed here, politely inform them that you do not have data for that region yet.
+logger = logging.getLogger(__name__)
 
-Groundwater Data:
-- Coimbatore, Tamil Nadu: Semi-Critical, Stage of Extraction 82%, Assessment Year 2023. (Source: "INGRES Groundwater Assessment Report 2023")
-- Bengaluru Urban, Karnataka: Over-Exploited, Stage of Extraction 145%, Assessment Year 2023. (Source: "Karnataka State Hydrology Bulletin")
-- Pune, Maharashtra: Safe, Stage of Extraction 58%, Assessment Year 2023. (Source: "Maharashtra Aquifer Health Survey")
-- Fresno, California: Critical, Water Level Drop -2.4m, Risk High. (Source: "CA Water Board Report 2023")
-- Lubbock, Texas: Medium Risk, Water Level Drop -1.8m. (Source: "Texas Drought Analysis 2023")
+SYSTEM_PROMPT = """
+You are Ingres Copilot, an official AI Groundwater Intelligence Assistant.
+You must ONLY use the provided RETRIEVED CONTEXT to answer the user's questions.
 
-Always format your response clearly.
+RULES:
+1. Do not fabricate, guess, or estimate groundwater values (e.g., stage of extraction, water levels).
+2. Do not use external knowledge outside the provided context for factual groundwater claims.
+3. If the required information is NOT in the retrieved context, you MUST say exactly: "I don't have information on this in the current knowledge base."
+4. You must cite your sources for every factual claim. Use the format [Source Name, Page X] or [Source Name, Row X].
+5. Do not invent page numbers or document titles. Only use what is provided in the metadata context.
 """
 
 class ChatService:
@@ -62,44 +63,120 @@ class ChatService:
         }
         await self.repository.add_message(conversation_id, user_msg)
 
-        # 2. Fetch conversation history for context
+        # 2. Location Detection via Groq
+        detected_location = {"state": None, "district": None, "block": None}
+        try:
+            loc_prompt = (
+                "Extract geographic entities from the user's query related to India (State, District, Block). "
+                "Respond ONLY with a valid JSON object. If an entity is not found, leave it as null. "
+                "Format: {\"state\": null, \"district\": null, \"block\": null}\n"
+                f"Query: {content}"
+            )
+            loc_res = await self.groq_client.chat.completions.create(
+                messages=[{"role": "user", "content": loc_prompt}],
+                model="llama-3.3-70b-versatile",
+                temperature=0,
+                response_format={"type": "json_object"}
+            )
+            parsed_loc = json.loads(loc_res.choices[0].message.content)
+            if isinstance(parsed_loc, dict):
+                detected_location.update(parsed_loc)
+        except Exception as e:
+            logger.warning(f"Location extraction failed: {e}")
+
+        # 3. Build Metadata Filter
+        metadata_filter = {}
+        conditions = []
+        
+        state = detected_location.get("state")
+        district = detected_location.get("district")
+        
+        if state:
+            conditions.append({"state": {"$in": [state, state.upper(), state.title()]}})
+        if district:
+            conditions.append({"district": {"$in": [district, district.upper(), district.title()]}})
+            
+        if len(conditions) == 1:
+            metadata_filter = conditions[0]
+        elif len(conditions) > 1:
+            metadata_filter = {"$and": conditions}
+
+        # 4. Retrieve Context via RAG
+        top_k = 5
+        matches = []
+        retrieval_mode = "semantic"
+        
+        if metadata_filter:
+            retrieval_mode = "metadata + semantic"
+            try:
+                matches = rag_core.search(content, top_k=top_k, metadata_filter=metadata_filter)
+            except Exception as e:
+                logger.warning(f"Chroma search error: {e}")
+                
+            if not matches:
+                retrieval_mode = "semantic fallback (no filter results)"
+                matches = rag_core.search(content, top_k=top_k)
+        else:
+            matches = rag_core.search(content, top_k=top_k)
+
+        # Output the debug block requested by the user
+        logger.info(json.dumps({
+            "detected_location": detected_location,
+            "retrieval_mode": retrieval_mode,
+            "results_count": len(matches)
+        }, indent=2))
+            
+        # 5. Build Grounded Context
+        context_str = "RETRIEVED CONTEXT:\n"
+        citations = []
+        for idx, m in enumerate(matches):
+            meta = m["metadata"]
+            title = meta.get("title", "Unknown Source")
+            page = meta.get("page")
+            row = meta.get("row")
+            loc_info = f" (State: {meta.get('state')}, District: {meta.get('district')})" if meta.get('state') else ""
+            
+            ref = f"Source {idx+1}: {title}"
+            if page: ref += f", Page {page}"
+            elif row: ref += f", Row {row}"
+            ref += loc_info
+            
+            context_str += f"\n[{ref}]\n{m['text']}\n"
+            
+            # Format citations for frontend
+            citations.append({
+                "source": meta.get("filename", "Unknown"),
+                "title": title,
+                "page": page or row
+            })
+
+        # 6. Fetch conversation history for memory
         conv = await self.get_conversation(conversation_id)
-        messages = [{"role": "system", "content": MOCK_FACTS}]
+        messages = [{"role": "system", "content": SYSTEM_PROMPT + "\n\n" + context_str}]
         
         if conv:
-            for m in conv.messages[-5:]: # Keep last 5 messages for context
+            for m in conv.messages[-5:]:
                 messages.append({"role": m.role, "content": m.content})
         
-        # Ensure the current message is in context if conv fetch failed or was empty
         if not conv or len(conv.messages) == 0:
              messages.append({"role": "user", "content": content})
 
-        # 3. Call Groq API with Streaming
-        stream = await self.groq_client.chat.completions.create(
-            messages=messages,
-            model="llama-3.3-70b-versatile",
-            stream=True,
-            temperature=0.3
-        )
+        # 7. Stream from Groq
+        try:
+            stream = await self.groq_client.chat.completions.create(
+                messages=messages,
+                model="llama-3.3-70b-versatile",
+                stream=True,
+                temperature=0.1
+            )
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'chunk', 'text': 'Error connecting to LLM provider.'})}\n\n"
+            yield "data: [DONE]\n\n"
+            return
 
         assistant_msg_id = str(uuid.uuid4())
         full_response = ""
 
-        # Mock citations based on keywords
-        citations = []
-        lower_content = content.lower()
-        if "coimbatore" in lower_content:
-            citations.append({"source": "INGRES_2023.pdf", "title": "INGRES Groundwater Assessment Report 2023", "page": 42})
-        if "bengaluru" in lower_content:
-            citations.append({"source": "KA_Hydro_Bull.pdf", "title": "Karnataka State Hydrology Bulletin", "page": 12})
-        if "pune" in lower_content:
-            citations.append({"source": "MH_Aquifer.pdf", "title": "Maharashtra Aquifer Health Survey", "page": 8})
-        if "fresno" in lower_content or "california" in lower_content:
-            citations.append({"source": "CA_Water_Board.pdf", "title": "CA Water Board Report 2023", "page": 15})
-        if "lubbock" in lower_content or "texas" in lower_content:
-            citations.append({"source": "TX_Drought.pdf", "title": "Texas Drought Analysis 2023", "page": 22})
-
-        # Yield metadata first (citations)
         yield f"data: {json.dumps({'type': 'metadata', 'id': assistant_msg_id, 'citations': citations})}\n\n"
 
         async for chunk in stream:
@@ -108,10 +185,9 @@ class ChatService:
                 full_response += text_chunk
                 yield f"data: {json.dumps({'type': 'chunk', 'text': text_chunk})}\n\n"
             
-            # Small sleep to allow event loop to yield to other tasks if needed
             await asyncio.sleep(0.01)
 
-        # 4. Save assistant message after stream finishes
+        # 8. Save assistant message
         assistant_msg = {
             "id": assistant_msg_id,
             "conversationId": conversation_id,

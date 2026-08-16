@@ -6,3 +6,8 @@ pydantic-settings
 python-jose[cryptography]
 email-validator
 groq
+pymupdf
+chromadb
+sentence-transformers
+pandas
+python-multipart
