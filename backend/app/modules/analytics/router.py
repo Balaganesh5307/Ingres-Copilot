@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import List, Optional
 from .service import AnalyticsService
-from .schemas import AnalyticsSummaryResponse, RankingsResponse, TrendsResponse, RegionCategorySummary, MapDataResponse
+from .schemas import AnalyticsSummaryResponse, RankingsResponse, TrendsResponse, RegionCategorySummary, MapDataResponse, MapDistrictResponse
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
@@ -36,6 +36,10 @@ async def get_categories(
 async def get_map_data(service: AnalyticsService = Depends(get_service)):
     states = await service.get_map_data()
     return MapDataResponse(states=states)
+
+@router.get("/map-data/districts/{state}", response_model=MapDistrictResponse)
+async def get_map_data_districts(state: str, service: AnalyticsService = Depends(get_service)):
+    return await service.get_map_data_districts(state)
 
 @router.get("/trends", response_model=TrendsResponse)
 async def get_trends(

@@ -63,3 +63,15 @@ class MapStateData(BaseModel):
 
 class MapDataResponse(BaseModel):
     states: List[MapStateData]
+
+class MapDistrictData(BaseModel):
+    district: str
+    assessmentUnitCount: int
+    categoryCounts: Dict[str, int]
+    riskCategory: Optional[str]
+    assessmentYear: int
+    assessmentUnits: List[AssessmentRecord] = []
+
+class MapDistrictResponse(BaseModel):
+    state: str
+    districts: List[MapDistrictData]

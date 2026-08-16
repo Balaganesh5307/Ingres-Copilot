@@ -170,3 +170,60 @@ class AnalyticsService:
             
         return map_data
 
+    async def get_map_data_districts(self, state: str) -> Dict[str, Any]:
+        pipeline = [
+            {"$match": {"state": {"$regex": f"^{state}$", "$options": "i"}}},
+            {"$group": {
+                "_id": "$district",
+                "categories": {"$push": "$category"},
+                "assessmentYear": {"$max": "$assessmentYear"},
+                "units": {"$push": {
+                    "assessmentUnit": "$assessmentUnit",
+                    "category": "$category",
+                    "assessmentYear": "$assessmentYear",
+                    "sourceDocument": "$sourceDocument",
+                    "sourcePage": "$sourcePage",
+                    "source": "$source",
+                    "state": "$state",
+                    "district": "$district"
+                }}
+            }}
+        ]
+        results = await self.assessments_collection.aggregate(pipeline).to_list(1000)
+        
+        districts = []
+        for r in results:
+            district = r["_id"]
+            if not district: continue
+            
+            categories = r["categories"]
+            dist_counts = {}
+            for c in categories:
+                dist_counts[c] = dist_counts.get(c, 0) + 1
+            
+            # Risk Priority: Over-Exploited > Critical > Semi-Critical > Safe
+            risk = None
+            if "Over-Exploited" in dist_counts:
+                risk = "Over-Exploited"
+            elif "Critical" in dist_counts:
+                risk = "Critical"
+            elif "Semi-Critical" in dist_counts:
+                risk = "Semi-Critical"
+            elif "Safe" in dist_counts:
+                risk = "Safe"
+                
+            districts.append({
+                "district": district,
+                "assessmentUnitCount": len(categories),
+                "categoryCounts": dist_counts,
+                "riskCategory": risk,
+                "assessmentYear": r.get("assessmentYear", 2025),
+                "assessmentUnits": r.get("units", [])
+            })
+            
+        return {
+            "state": state,
+            "districts": districts
+        }
+
+
