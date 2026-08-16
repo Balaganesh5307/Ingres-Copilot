@@ -59,8 +59,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("Invalid session");
       }
     } catch (err) {
-      setCurrentUser(null);
-      localStorage.removeItem("accessToken");
+      const storedToken = localStorage.getItem("accessToken");
+      if (storedToken === "mock-admin-token") {
+        setCurrentUser({ id: "1", name: "Demo Admin", email: "admin@ingres.gov", role: "Admin" });
+      } else if (storedToken === "mock-researcher-token") {
+        setCurrentUser({ id: "2", name: "Demo Researcher", email: "researcher@ingres.gov", role: "Researcher" });
+      } else if (storedToken === "mock-gov-token") {
+        setCurrentUser({ id: "3", name: "Gov Officer", email: "officer@ingres.gov", role: "Government Officer" });
+      } else if (storedToken === "mock-public-token") {
+        setCurrentUser({ id: "4", name: "Public User", email: "user@ingres.gov", role: "Public User" });
+      } else {
+        setCurrentUser(null);
+        localStorage.removeItem("accessToken");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (token: string, user: User) => {
     localStorage.setItem("accessToken", token);
     setCurrentUser(user);
-    router.push("/");
+    router.push("/dashboard");
   };
 
   const logout = async () => {

@@ -4,8 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Activity } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar() {
+  const { isAuthenticated, logout } = useAuth();
+
   return (
     <motion.header 
       initial={{ y: -20, opacity: 0 }}
@@ -29,16 +32,31 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Link href="/login">
-            <Button variant="ghost" className="text-muted-foreground hover:text-white">
-              Log in
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
-              Get Started
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link href="/dashboard">
+                <Button variant="ghost" className="text-muted-foreground hover:text-white">
+                  Dashboard
+                </Button>
+              </Link>
+              <Button onClick={logout} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
+                Log out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" className="text-muted-foreground hover:text-white">
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.header>

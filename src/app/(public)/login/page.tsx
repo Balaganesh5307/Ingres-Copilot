@@ -7,30 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Activity, Loader2, Sparkles } from "lucide-react";
+import { Activity, Loader2, Users, Search, ShieldCheck, Settings, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login: contextLogin } = useAuth();
+  const { login: contextLogin, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isDemoLoading, setIsDemoLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setError("");
 
     if (!email || !password) {
       setError("Please fill in all fields.");
-      return;
-    }
-    
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError("Please enter a valid email address.");
       return;
     }
 
@@ -50,7 +45,7 @@ export default function LoginPage() {
       
       contextLogin(data.access_token, {
         id: data.user_id,
-        name: "", // Will be fetched via /me shortly or context refresh
+        name: "", 
         email,
         role: data.role
       });
@@ -61,50 +56,92 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoAccess = () => {
-    setError("Demo access disabled. Please register an account.");
+  const handleDemoAccess = async (role: string) => {
+    setDemoLoading(role);
+    setError("");
+    
+    if (role === "Public") {
+      // Public / Guest mode bypasses auth entirely
+      await logout();
+      router.push("/dashboard");
+      return;
+    }
+
+    let demoEmail = "";
+    if (role === "Researcher") demoEmail = "researcher@demo.com";
+    if (role === "Government Officer") demoEmail = "gov@demo.com";
+    if (role === "Admin") demoEmail = "admin@demo.com";
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: demoEmail, password: "demo" })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Login failed");
+      
+      contextLogin(data.access_token, {
+        id: data.user_id,
+        name: "", 
+        email: demoEmail,
+        role: data.role
+      });
+    } catch (err: any) {
+      setError("Failed to load demo account. Ensure seed_demo_users.py was run.");
+      setDemoLoading("");
+    }
   };
 
+  const demoAccounts = [
+    { name: "Public", role: "Public", icon: Users, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/30" },
+    { name: "Researcher", role: "Researcher", icon: Search, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/30" },
+    { name: "Gov Officer", role: "Government Officer", icon: ShieldCheck, color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/30" },
+    { name: "Admin", role: "Admin", icon: Settings, color: "text-red-400", bg: "bg-red-400/10", border: "border-red-400/30" },
+  ];
+
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] items-center justify-center p-4 relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+    <div className="flex flex-col min-h-screen items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none" />
       
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-md z-10"
+        transition={{ duration: 0.6, ease: "easeOut", type: "spring" }}
+        className="w-full max-w-5xl z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch"
       >
-        <Card className="glass-card border-border/50">
-          <CardHeader className="space-y-4 items-center text-center pb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/50">
-              <Activity className="w-6 h-6 text-primary" />
+        <Card className="glass-card border-border/50 flex flex-col justify-center">
+          <CardHeader className="space-y-4 pb-6">
+            <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/50 shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+              <Activity className="w-7 h-7 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
-              <CardDescription className="text-muted-foreground mt-2">
-                Enter your credentials to access the intelligence dashboard.
+              <CardTitle className="text-3xl font-bold tracking-tight gradient-text">Sign in to Ingres Copilot</CardTitle>
+              <CardDescription className="text-muted-foreground mt-2 text-base">
+                Secure access to the national groundwater intelligence platform.
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-foreground/80">Email Address</Label>
                 <Input 
                   id="email" 
                   type="email" 
                   placeholder="agent@gov.water.org" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-background/50 border-border/50 focus-visible:ring-primary/50"
-                  disabled={isLoading}
+                  className="h-12 bg-background/50 border-border/50 focus-visible:ring-primary/50 text-base"
+                  disabled={isLoading || !!demoLoading}
                 />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link href="#" className="text-xs text-primary hover:underline">
+                  <Label htmlFor="password" className="text-foreground/80">Password</Label>
+                  <Link href="#" className="text-xs text-primary hover:underline transition-all">
                     Forgot password?
                   </Link>
                 </div>
@@ -113,8 +150,8 @@ export default function LoginPage() {
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-background/50 border-border/50 focus-visible:ring-primary/50"
-                  disabled={isLoading}
+                  className="h-12 bg-background/50 border-border/50 focus-visible:ring-primary/50 text-base"
+                  disabled={isLoading || !!demoLoading}
                 />
               </div>
               
@@ -122,46 +159,64 @@ export default function LoginPage() {
                 <motion.div 
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="text-sm text-destructive font-medium"
+                  className="text-sm text-destructive font-medium bg-destructive/10 p-3 rounded-md border border-destructive/20"
                 >
                   {error}
                 </motion.div>
               )}
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 mt-4" disabled={isLoading || isDemoLoading}>
-                {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+              <Button type="submit" className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 mt-2 shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all" disabled={isLoading || !!demoLoading}>
+                {isLoading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <LogIn className="w-5 h-5 mr-2" />}
                 {isLoading ? "Authenticating..." : "Sign In"}
-              </Button>
-
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border/50" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or</span>
-                </div>
-              </div>
-
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full border-primary/30 hover:bg-primary/5 text-primary" 
-                onClick={handleDemoAccess}
-                disabled={isLoading || isDemoLoading}
-              >
-                {isDemoLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                {isDemoLoading ? "Preparing Demo..." : "Quick Demo Access"}
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex justify-center border-t border-border/20 pt-6">
+          <CardFooter className="flex justify-center border-t border-border/20 pt-6 mt-auto">
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-primary hover:underline font-medium">
-                Request Access
+              Need access?{" "}
+              <Link href="/register" className="text-primary hover:underline font-semibold transition-all">
+                Request an account
               </Link>
             </p>
           </CardFooter>
+        </Card>
+
+        <Card className="glass-card border-border/50 bg-background/20 relative overflow-hidden flex flex-col justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+          <CardHeader>
+            <CardTitle className="text-xl">Quick Demo Access</CardTitle>
+            <CardDescription>
+              Instantly explore the platform using role-based demo accounts.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              {demoAccounts.map((acc) => {
+                const Icon = acc.icon;
+                const isThisLoading = demoLoading === acc.role;
+                return (
+                  <Button
+                    key={acc.role}
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleDemoAccess(acc.role)}
+                    disabled={isLoading || !!demoLoading}
+                    className={`h-auto flex flex-col items-center justify-center p-6 gap-3 border transition-all duration-300 hover:scale-[1.02] ${acc.bg} ${acc.border} hover:shadow-lg`}
+                  >
+                    {isThisLoading ? (
+                      <Loader2 className={`w-8 h-8 animate-spin ${acc.color}`} />
+                    ) : (
+                      <Icon className={`w-8 h-8 ${acc.color}`} />
+                    )}
+                    <div className="text-center">
+                      <div className="font-semibold text-foreground">{acc.name}</div>
+                      <div className="text-xs text-muted-foreground mt-1">View Dashboard</div>
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
+          </CardContent>
         </Card>
       </motion.div>
     </div>
