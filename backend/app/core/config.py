@@ -12,10 +12,13 @@ class Settings(BaseSettings):
     
     CORS_ORIGINS: str = '["http://localhost:3000"]'
     
+    GROQ_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
+    
     @property
     def cors_origins_list(self) -> List[str]:
         return json.loads(self.CORS_ORIGINS)
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
 
 settings = Settings()

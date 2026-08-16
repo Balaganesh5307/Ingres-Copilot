@@ -31,8 +31,11 @@ Ingres Copilot is a premium SaaS web application designed to provide government-
 ### Prerequisites
 - Node.js (v18 or higher recommended)
 - npm
+- Python 3.10+
 
-### Installation
+### Installation & Setup
+
+#### Frontend Setup
 1. Clone the repository or navigate to the project directory:
    ```bash
    cd IngresCopilot
@@ -42,12 +45,39 @@ Ingres Copilot is a premium SaaS web application designed to provide government-
    npm install
    ```
 
+#### Backend Setup
+The backend uses a Domain-Driven (Modular) architecture using FastAPI.
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create a virtual environment and install dependencies:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+3. Configure environment variables:
+   Ensure you have copied `.env.example` to `.env` in the **root of the project** and updated the MongoDB URI, JWT Secret, and GROQ_API_KEY.
+
 ### Running Locally
-Start the development server:
+
+You need to run both the frontend and backend servers.
+
+**Terminal 1 (Frontend):**
 ```bash
+# from root directory
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+
+**Terminal 2 (Backend):**
+```bash
+# from backend directory
+uvicorn app.main:app --reload
+```
+The API will be available at `http://localhost:8000`.
+You can view the interactive Swagger documentation at `http://localhost:8000/docs`.
 
 ## Future Roadmap
 - Integration with real authentication providers (e.g., Supabase, NextAuth).
