@@ -10,22 +10,32 @@ import {
   FileText, 
   User, 
   Settings,
-  Activity
+  Activity,
+  LogOut
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
-const sidebarLinks = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "AI Assistant", href: "/assistant", icon: Bot },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Interactive Map", href: "/map", icon: MapIcon },
-  { name: "Report Summarizer", href: "/summarizer", icon: FileText },
-  { name: "Profile", href: "/profile", icon: User },
-  { name: "Admin Setup", href: "/admin", icon: Settings },
+const ALL_LINKS = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, access: "all" },
+  { name: "AI Assistant", href: "/assistant", icon: Bot, access: "all" },
+  { name: "Analytics", href: "/analytics", icon: BarChart3, access: "all" },
+  { name: "Interactive Map", href: "/map", icon: MapIcon, access: "all" },
+  { name: "Report Summarizer", href: "/summarizer", icon: FileText, access: "all" },
+  { name: "Profile", href: "/profile", icon: User, access: "auth" },
+  { name: "Admin Setup", href: "/admin", icon: Settings, access: ["Admin"] },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { role, isAuthenticated, currentUser, logout } = useAuth();
+
+  const sidebarLinks = ALL_LINKS.filter(link => {
+    if (link.access === "all") return true;
+    if (link.access === "auth" && isAuthenticated) return true;
+    if (Array.isArray(link.access) && link.access.includes(role || "")) return true;
+    return false;
+  });
 
   return (
     <div className="w-64 h-full bg-background/80 backdrop-blur-xl border-r border-border/40 flex flex-col z-40 fixed left-0 top-0">
@@ -34,7 +44,7 @@ export function Sidebar() {
           <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/50 group-hover:bg-primary/30 transition-colors">
             <Activity className="w-5 h-5 text-primary" />
           </div>
-          <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+          <span className="font-bold text-lg tracking-tight gradient-text">
             Ingres Copilot
           </span>
         </Link>
@@ -65,15 +75,22 @@ export function Sidebar() {
       </div>
 
       <div className="p-4 border-t border-border/40">
-        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-background/50 border border-border/40">
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-            <User className="w-4 h-4 text-primary" />
+        {isAuthenticated ? (
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-background/50 border border-border/40 hover:bg-white/5 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
+              <User className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{currentUser?.name || "User"}</p>
+              <p className="text-xs text-muted-foreground truncate">{role}</p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">Agent Smith</p>
-            <p className="text-xs text-muted-foreground truncate">Government Role</p>
-          </div>
-        </div>
+        ) : (
+          <Link href="/login" className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 transition-colors">
+            <LogOut className="w-4 h-4" />
+            <span className="text-sm font-medium">Sign In</span>
+          </Link>
+        )}
       </div>
     </div>
   );
