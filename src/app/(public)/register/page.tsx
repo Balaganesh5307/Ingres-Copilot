@@ -8,8 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Activity, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { login: contextLogin } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     agency: "",
@@ -19,7 +23,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -39,11 +43,29 @@ export default function RegisterPage() {
     }
 
     setIsLoading(true);
-    // Mock registration delay
-    setTimeout(() => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/v1/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.detail || "Registration failed");
+      }
+      
+      contextLogin(data.access_token, data.user);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setIsLoading(false);
-      alert("Mock Registration Successful! Awaiting agency approval.");
-    }, 1500);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

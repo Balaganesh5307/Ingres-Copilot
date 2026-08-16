@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, BackgroundTasks
 from typing import List, Dict, Any
 from app.modules.documents.service import DocumentService
+from app.modules.auth.dependencies import require_role
 import shutil
 import os
 
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/documents", tags=["Documents"])
 def get_document_service():
     return DocumentService()
 
-@router.post("/upload")
+@router.post("/upload", dependencies=[Depends(require_role(["Admin"]))])
 async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...), service: DocumentService = Depends(get_document_service)):
     """Upload and ingest a PDF document."""
     if not file.filename.endswith(".pdf"):
@@ -23,7 +24,7 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     background_tasks.add_task(service.ingest_pdf, file_path, file.filename)
     return {"message": f"Upload received. Processing {file.filename} in the background."}
 
-@router.post("/upload-csv")
+@router.post("/upload-csv", dependencies=[Depends(require_role(["Admin"]))])
 async def upload_csv(background_tasks: BackgroundTasks, file: UploadFile = File(...), service: DocumentService = Depends(get_document_service)):
     """Upload and ingest a CSV file."""
     if not file.filename.endswith(".csv"):
@@ -52,7 +53,7 @@ async def get_document(doc_id: str, service: DocumentService = Depends(get_docum
     doc["_id"] = str(doc["_id"])
     return doc
 
-@router.delete("/{doc_id}")
+@router.delete("/{doc_id}", dependencies=[Depends(require_role(["Admin"]))])
 async def delete_document(doc_id: str, service: DocumentService = Depends(get_document_service)):
     """Delete document metadata. (Note: currently doesn't delete chunks from ChromaDB for prototype simplicity)."""
     await service.repository.delete_document(doc_id)

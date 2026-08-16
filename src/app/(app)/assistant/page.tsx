@@ -11,8 +11,9 @@ import {
   Send, Bot, User, Menu, FileText, Search, MessageSquare, PanelRightClose, PanelRightOpen 
 } from "lucide-react";
 
+import { useAuth } from "@/contexts/AuthContext";
+
 const API_BASE = "http://localhost:8000/api/v1";
-const DUMMY_USER_ID = "user_mock_123";
 
 const suggestedQuestions = [
   "Show groundwater depletion rates in Coimbatore.",
@@ -22,6 +23,7 @@ const suggestedQuestions = [
 ];
 
 export default function AssistantPage() {
+  const { isAuthenticated, currentUser } = useAuth();
   const [conversations, setConversations] = useState<any[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   
@@ -46,9 +48,19 @@ export default function AssistantPage() {
     loadConversations();
   }, []);
 
+  const getHeaders = () => {
+    const token = localStorage.getItem("accessToken");
+    return token ? { "Authorization": `Bearer ${token}` } : {};
+  };
+
   const loadConversations = async () => {
+    if (!isAuthenticated) {
+      setConversations([]);
+      createNewConversation();
+      return;
+    }
     try {
-      const res = await fetch(`${API_BASE}/chat/conversations?userId=${DUMMY_USER_ID}`);
+      const res = await fetch(`${API_BASE}/chat/conversations`, { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
         setConversations(data);
@@ -60,24 +72,26 @@ export default function AssistantPage() {
       }
     } catch (error) {
       console.error("Failed to load conversations", error);
-      // Fallback
-      setMessages([{ role: "assistant", content: "Hello! Backend is not reachable. Ensure the FastAPI server is running on port 8000." }]);
+      setMessages([{ role: "assistant", content: "Hello! Backend is not reachable." }]);
     }
   };
 
   const createNewConversation = async () => {
     try {
+      const hdrs: any = { "Content-Type": "application/json", ...getHeaders() };
       const res = await fetch(`${API_BASE}/chat/conversations`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: DUMMY_USER_ID, title: "New Chat" })
+        headers: hdrs,
+        body: JSON.stringify({ title: "New Chat" })
       });
       if (res.ok) {
         const data = await res.json();
         setCurrentConvId(data.id);
         setMessages([{ role: "assistant", content: "Hello! I am Ingres Copilot. How can I assist you with groundwater intelligence today?" }]);
         setCitations([]);
-        loadConversations(); // refresh list
+        if (isAuthenticated) {
+          loadConversations(); // refresh list
+        }
       }
     } catch (error) {
       console.error("Failed to create conversation", error);
@@ -86,7 +100,7 @@ export default function AssistantPage() {
 
   const loadSingleConversation = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/chat/conversations/${id}`);
+      const res = await fetch(`${API_BASE}/chat/conversations/${id}`, { headers: getHeaders() });
       if (res.ok) {
         const data = await res.json();
         setCurrentConvId(data._id || data.id);
@@ -111,9 +125,10 @@ export default function AssistantPage() {
     setCitations([]); // clear citations for new request
     
     try {
+      const hdrs: any = { "Content-Type": "application/json", ...getHeaders() };
       const res = await fetch(`${API_BASE}/chat/conversations/${currentConvId}/messages`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: hdrs,
         body: JSON.stringify({ conversationId: currentConvId, content: text })
       });
 

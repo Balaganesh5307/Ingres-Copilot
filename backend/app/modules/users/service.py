@@ -1,5 +1,8 @@
 from app.modules.users.repository import UserRepository
-from app.modules.users.schemas import UserCreate, UserResponse
+from app.modules.users.schemas import UserCreate, UserResponse, RoleEnum
+from typing import List
+from app.core.security import get_password_hash
+from datetime import datetime
 from typing import List
 
 class UserService:
@@ -9,15 +12,26 @@ class UserService:
     async def create_user(self, user: UserCreate) -> str:
         """
         Create a new user.
-        Future: Implement password hashing before saving.
+        Always forces Public User role and hashes password.
         """
-        user_dict = user.model_dump()
-        # Mocking password hash for now
-        user_dict["password"] = f"hashed_{user_dict['password']}"
+        user_dict = user.model_dump(exclude={"password"})
+        user_dict["passwordHash"] = get_password_hash(user.password)
+        # Enforce Public User
+        user_dict["role"] = RoleEnum.PUBLIC_USER.value
+        user_dict["createdAt"] = datetime.utcnow().isoformat()
+        user_dict["updatedAt"] = datetime.utcnow().isoformat()
+        
         return await self.repository.create_user(user_dict)
 
-    async def get_user_by_email(self, email: str) -> UserResponse:
+    async def get_user_by_email(self, email: str) -> dict:
         user = await self.repository.get_user_by_email(email)
+        if user:
+            user["_id"] = str(user["_id"])
+            return user
+        return None
+        
+    async def get_user_by_id(self, user_id: str) -> UserResponse:
+        user = await self.repository.get_user_by_id(user_id)
         if user:
             user["_id"] = str(user["_id"])
             return UserResponse(**user)
