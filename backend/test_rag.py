@@ -27,6 +27,8 @@ async def test_query(query: str, desc: str):
                 data = json.loads(data_str)
                 if data["type"] == "chunk":
                     output += data["text"]
+                elif data["type"] == "mapAction":
+                    print(f"\n[MAP ACTION DETECTED]: {json.dumps(data['data'])}")
                 elif data["type"] == "metadata":
                     pass
             except:
@@ -39,17 +41,32 @@ async def test_query(query: str, desc: str):
 async def run_tests():
     await connect_to_mongo()
     
-    # Test 1: Real district
-    await test_query("What is the groundwater depth level for Coimbatore in 2020?", "Real district from dataset")
+    # Test 1: Document question
+    await test_query("What does the 2025 groundwater report say about Rajasthan?", "Document question")
     
-    # Test 2: Real state (Let's assume Tamil Nadu or something from the PDFs)
-    await test_query("Show groundwater information for Tamil Nadu.", "Real state from dataset")
+    # Test 2: State data question
+    await test_query("How many over-exploited assessment units are there in Tamil Nadu?", "State data question")
     
-    # Test 3: Real assessment unit / block
-    await test_query("Which assessment units are Over-Exploited?", "Real assessment unit/block")
+    # Test 3: District data question
+    await test_query("What is the category distribution for Coimbatore?", "District data question")
     
-    # Test 4: No location
-    await test_query("How do you calculate groundwater recharge?", "Question without a location")
+    # Test 4: Comparison question
+    await test_query("Compare Rajasthan and Tamil Nadu.", "Comparison question")
+    
+    # Test 5: Concept explanation
+    await test_query("What does Semi-Critical mean?", "Concept explanation")
+    
+    # Test 6: Unknown question
+    await test_query("What is the recipe for chocolate cake?", "Unknown question")
+    
+    # Test 7: HYBRID question
+    await test_query("Why is Rajasthan considered high risk and which districts are affected?", "Hybrid question")
+    
+    # Test 8: Map Action - Valid
+    await test_query("Show over-exploited areas in Rajasthan on the map.", "Map Action Valid")
+    
+    # Test 9: Map Action - Invalid State
+    await test_query("Show critical areas in unknown_state on the map.", "Map Action Invalid State")
     
     await close_mongo_connection()
 

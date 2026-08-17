@@ -137,15 +137,15 @@ export default function AnalyticsPage() {
           <p className="text-muted-foreground">Deep dive into groundwater metrics and geographical rankings.</p>
         </div>
         
-        <div className="flex items-center gap-4 glass-card p-2.5 rounded-2xl border border-white/5 shadow-lg relative overflow-hidden group">
+        <div className="flex items-center gap-2 sm:gap-4 glass-card p-2 sm:p-2.5 rounded-2xl border border-slate-200/60 shadow-lg relative overflow-hidden group w-full sm:w-auto max-w-full">
           <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Filter className="w-5 h-5 text-primary ml-2 z-10" />
-          <div className="z-10">
-            <Select value={selectedYear} onValueChange={setSelectedYear}>
-              <SelectTrigger className="w-[120px] bg-transparent border-0 focus:ring-0 text-foreground font-medium hover:bg-primary/10 rounded-xl transition-colors cursor-pointer">
+          <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-primary ml-1 sm:ml-2 z-10 shrink-0" />
+          <div className="z-10 flex-1 sm:flex-none">
+            <Select value={selectedYear} onValueChange={(val) => setSelectedYear(val)}>
+              <SelectTrigger className="w-full sm:w-[120px] bg-transparent border-0 focus:ring-0 text-foreground font-medium hover:bg-primary/10 rounded-xl transition-colors cursor-pointer px-2 sm:px-3">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
-              <SelectContent className="glass border-white/10 rounded-xl shadow-xl">
+              <SelectContent className="glass border-slate-200/60 rounded-xl shadow-xl">
                 <SelectItem value="2025" className="focus:bg-primary/20 cursor-pointer rounded-lg mx-1 my-0.5">2025</SelectItem>
                 <SelectItem value="2024" className="focus:bg-primary/20 cursor-pointer rounded-lg mx-1 my-0.5">2024</SelectItem>
                 <SelectItem value="2023" className="focus:bg-primary/20 cursor-pointer rounded-lg mx-1 my-0.5">2023</SelectItem>
@@ -156,13 +156,13 @@ export default function AnalyticsPage() {
               </SelectContent>
             </Select>
           </div>
-          <div className="w-px h-6 bg-border/40 z-10" />
-          <div className="z-10">
-            <Select value={selectedState} onValueChange={setSelectedState}>
-              <SelectTrigger className="w-[170px] bg-transparent border-0 focus:ring-0 text-foreground font-medium hover:bg-primary/10 rounded-xl transition-colors cursor-pointer">
+          <div className="w-px h-6 bg-border/40 z-10 shrink-0" />
+          <div className="z-10 flex-1 sm:flex-none">
+            <Select value={selectedState} onValueChange={(val) => setSelectedState(val)}>
+              <SelectTrigger className="w-full sm:w-[170px] bg-transparent border-0 focus:ring-0 text-foreground font-medium hover:bg-primary/10 rounded-xl transition-colors cursor-pointer px-2 sm:px-3">
                 <SelectValue placeholder="State" />
               </SelectTrigger>
-              <SelectContent className="glass border-white/10 rounded-xl shadow-xl">
+              <SelectContent className="glass border-slate-200/60 rounded-xl shadow-xl">
                 <SelectItem value="all" className="focus:bg-primary/20 cursor-pointer rounded-lg mx-1 my-0.5">All States</SelectItem>
                 <SelectItem value="Arunachal Pradesh" className="focus:bg-primary/20 cursor-pointer rounded-lg mx-1 my-0.5">Arunachal Pradesh</SelectItem>
                 <SelectItem value="Assam" className="focus:bg-primary/20 cursor-pointer rounded-lg mx-1 my-0.5">Assam</SelectItem>
@@ -188,7 +188,7 @@ export default function AnalyticsPage() {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <motion.div variants={itemVariants}>
-              <Card className="glass-card border-white/5 h-[420px] flex flex-col hover:border-cyan-500/30 transition-colors duration-500 group shadow-lg">
+              <Card className="glass-card border-slate-200/60 h-[420px] flex flex-col hover:border-cyan-500/30 transition-colors duration-500 group shadow-lg">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:border-cyan-500/50 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all">
@@ -228,9 +228,9 @@ export default function AnalyticsPage() {
                         <XAxis dataKey="year" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                         <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)' }}
+                          contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(0,0,0,0.1)', borderRadius: '12px', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', color: '#000' }}
                           itemStyle={{ color: '#06b6d4', fontWeight: 600 }}
-                          labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
+                          labelStyle={{ color: '#64748b', marginBottom: '4px' }}
                         />
                         <Area type="monotone" dataKey="extractable_bcm" name="Extractable BCM" stroke="#06b6d4" strokeWidth={3} fillOpacity={1} fill="url(#colorRecharge)" activeDot={{ r: 6, fill: '#06b6d4', stroke: '#0f172a', strokeWidth: 2 }} />
                       </AreaChart>
@@ -241,7 +241,7 @@ export default function AnalyticsPage() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <Card className="glass-card border-white/5 h-[420px] flex flex-col hover:border-purple-500/30 transition-colors duration-500 group shadow-lg">
+              <Card className="glass-card border-slate-200/60 h-[420px] flex flex-col hover:border-purple-500/30 transition-colors duration-500 group shadow-lg">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:border-purple-500/50 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.3)] transition-all">
@@ -271,9 +271,9 @@ export default function AnalyticsPage() {
                         <XAxis dataKey="year" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                         <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)' }}
+                          contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: 'rgba(0,0,0,0.1)', borderRadius: '12px', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', color: '#000' }}
                           itemStyle={{ fontWeight: 600 }}
-                          labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
+                          labelStyle={{ color: '#64748b', marginBottom: '4px' }}
                         />
                         <Legend wrapperStyle={{ paddingTop: '10px' }} />
                         <Area type="monotone" name="Recharge BCM" dataKey="recharge_bcm" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRec)" activeDot={{ r: 6, fill: '#10b981', stroke: '#0f172a', strokeWidth: 2 }} />
@@ -295,13 +295,13 @@ export default function AnalyticsPage() {
           {/* Tables Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <motion.div variants={itemVariants}>
-              <Card className="glass-card border-white/5 overflow-hidden shadow-lg">
+              <Card className="glass-card border-slate-200/60 overflow-hidden shadow-lg">
                 <CardHeader className="bg-primary/5 border-b border-border/20">
                   <CardTitle className="text-lg font-bold">State Health Rankings ({selectedYear})</CardTitle>
                   <CardDescription>Ranked by Extractable BCM Capacity</CardDescription>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <Table>
+                <CardContent className="p-0 overflow-x-auto">
+                  <Table className="min-w-[500px]">
                     <TableHeader className="bg-background/40">
                       <TableRow className="border-border/30 hover:bg-transparent">
                         <TableHead className="w-[100px] pl-6 font-semibold">Rank</TableHead>
@@ -343,7 +343,7 @@ export default function AnalyticsPage() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <Card className="glass-card border-white/5 overflow-hidden shadow-lg relative">
+              <Card className="glass-card border-slate-200/60 overflow-hidden shadow-lg relative">
                 {/* Subtle warning glow */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-destructive/5 blur-3xl pointer-events-none" />
                 <CardHeader className="bg-destructive/5 border-b border-border/20">
@@ -355,8 +355,8 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <Table>
+                <CardContent className="p-0 overflow-x-auto">
+                  <Table className="min-w-[600px]">
                     <TableHeader className="bg-background/40">
                       <TableRow className="border-border/30 hover:bg-transparent">
                         <TableHead className="pl-6 font-semibold">District</TableHead>

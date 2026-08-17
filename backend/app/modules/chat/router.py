@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from app.modules.chat.schemas import ConversationCreate, Conversation, MessageCreate
+from app.modules.chat.schemas import ConversationCreate, Conversation, MessageCreate, ConversationUpdate
 from app.modules.chat.service import ChatService
 from app.modules.auth.dependencies import get_current_user, get_current_user_optional
 from app.modules.users.schemas import UserResponse
@@ -30,6 +30,30 @@ async def get_conversation(conversation_id: str, service: ChatService = Depends(
     if not conv or conv.userId != current_user.id:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conv
+
+@router.delete("/conversations/{conversation_id}", status_code=200)
+async def delete_conversation(conversation_id: str, service: ChatService = Depends(get_chat_service), current_user: UserResponse = Depends(get_current_user)):
+    """Delete a conversation."""
+    conv = await service.get_conversation(conversation_id)
+    if not conv or conv.userId != current_user.id:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    
+    success = await service.delete_conversation(conversation_id)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to delete conversation")
+    return {"message": "Conversation deleted"}
+
+@router.put("/conversations/{conversation_id}", status_code=200)
+async def rename_conversation(conversation_id: str, data: ConversationUpdate, service: ChatService = Depends(get_chat_service), current_user: UserResponse = Depends(get_current_user)):
+    """Rename a conversation."""
+    conv = await service.get_conversation(conversation_id)
+    if not conv or conv.userId != current_user.id:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    
+    success = await service.rename_conversation(conversation_id, data.title)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to rename conversation")
+    return {"message": "Conversation renamed", "title": data.title}
 
 @router.post("/conversations/{conversation_id}/messages")
 async def send_message(conversation_id: str, msg: MessageCreate, service: ChatService = Depends(get_chat_service), current_user: Optional[UserResponse] = Depends(get_current_user_optional)):

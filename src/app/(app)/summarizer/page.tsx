@@ -12,6 +12,7 @@ export default function SummarizerPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState(false);
+  const [summaryData, setSummaryData] = useState<{summary: string, insights: {text: string, type: string}[]} | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -23,16 +24,38 @@ export default function SummarizerPage() {
     }
   };
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
     if (!file) return;
     setIsProcessing(true);
     setResult(false);
     
-    // Mock processing delay
-    setTimeout(() => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+      const res = await fetch(`${API_BASE}/documents/summarize`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setSummaryData(data);
+        setResult(true);
+      } else {
+        alert("Failed to summarize document");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error summarizing document");
+    } finally {
       setIsProcessing(false);
-      setResult(true);
-    }, 2500);
+    }
   };
 
   const handleExport = () => {
@@ -61,7 +84,7 @@ export default function SummarizerPage() {
         
         {/* Left Column: Upload */}
         <div className="space-y-6">
-          <Card className="glass-card border-white/5 shadow-xl relative overflow-hidden group">
+          <Card className="glass-card border-slate-200/60 shadow-xl relative overflow-hidden group">
             {/* Subtle glow on hover */}
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             <CardHeader className="pb-4">
@@ -93,7 +116,7 @@ export default function SummarizerPage() {
                   </motion.div>
                 ) : (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center pointer-events-none">
-                    <div className="w-20 h-20 rounded-full bg-background/50 flex items-center justify-center mb-5 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <div className="w-20 h-20 rounded-full bg-background/50 flex items-center justify-center mb-5 border border-slate-200/60 shadow-inner group-hover:scale-110 transition-transform duration-500">
                       <UploadCloud className="w-10 h-10 text-muted-foreground/50 group-hover:text-primary transition-colors duration-500" />
                     </div>
                     <p className="font-semibold text-foreground/90 mb-2 text-lg">Drag & Drop your file here</p>
@@ -112,7 +135,7 @@ export default function SummarizerPage() {
                     <Button 
                       onClick={() => fileInputRef.current?.click()}
                       variant="outline" 
-                      className="border-white/10 bg-white/5 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 shadow-md pointer-events-auto rounded-xl h-11 px-8"
+                      className="border-slate-200/60 bg-black/5 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 shadow-md pointer-events-auto rounded-xl h-11 px-8"
                     >
                       Browse Files
                     </Button>
@@ -142,10 +165,10 @@ export default function SummarizerPage() {
               <motion.div 
                 key="empty"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="h-full min-h-[500px] flex items-center justify-center border border-white/5 rounded-2xl bg-black/20 border-dashed backdrop-blur-sm"
+                className="h-full min-h-[500px] flex items-center justify-center border border-border/20 rounded-2xl bg-black/5 border-dashed backdrop-blur-sm"
               >
                 <div className="text-center p-8 opacity-40 flex flex-col items-center">
-                  <div className="w-24 h-24 rounded-3xl bg-white/5 flex items-center justify-center mb-6">
+                  <div className="w-24 h-24 rounded-3xl bg-black/10 flex items-center justify-center mb-6">
                     <FileText className="w-12 h-12 text-muted-foreground" />
                   </div>
                   <p className="text-lg font-medium">Awaiting Document</p>
@@ -196,29 +219,24 @@ export default function SummarizerPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-base text-foreground/80 leading-relaxed font-medium">
-                      The uploaded document outlines the 2023 hydrological survey for the Central Basin. It highlights a critical <span className="text-destructive font-bold bg-destructive/10 px-1.5 py-0.5 rounded">12% deficit in aquifer recharge</span> compared to the previous decade. Immediate reduction in industrial extraction is recommended for districts A and B to prevent permanent subsidence.
+                      {summaryData?.summary || "Summary could not be generated."}
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="glass-card border-white/5 flex-1">
-                  <CardHeader className="pb-3 border-b border-white/5 bg-white/5">
+                <Card className="glass-card border-slate-200/60 flex-1">
+                  <CardHeader className="pb-3 border-b border-border/20 bg-primary/5">
                     <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Key Insights & Metrics</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
-                      {[
-                        { text: "Recharge deficit: 12% below 10-year average", type: "warning" },
-                        { text: "High risk zones identified: District A, District B", type: "danger" },
-                        { text: "Primary cause: Prolonged drought & agricultural over-extraction", type: "info" },
-                        { text: "Recommended action: 15% mandated extraction cut", type: "success" }
-                      ].map((insight, i) => (
+                      {summaryData?.insights?.map((insight, i) => (
                         <motion.div 
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.1 + 0.2 }}
                           key={i} 
-                          className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors"
+                          className="flex items-start gap-3 p-3 rounded-xl bg-black/5 border border-border/20 hover:bg-black/10 transition-colors"
                         >
                           <div className={`mt-0.5 p-1 rounded-md ${
                             insight.type === 'warning' ? 'bg-yellow-500/20 text-yellow-400' :
@@ -240,7 +258,7 @@ export default function SummarizerPage() {
                     onClick={handleExport}
                     disabled={isExporting}
                     variant="outline" 
-                    className="flex-1 h-12 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-foreground"
+                    className="flex-1 h-12 rounded-xl border-border/20 bg-black/5 hover:bg-black/10 text-foreground"
                   >
                     {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
                     {isExporting ? "Exporting..." : "Export PDF"}

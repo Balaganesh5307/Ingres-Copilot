@@ -11,7 +11,9 @@ import {
   User, 
   Settings,
   Activity,
-  LogOut
+  LogOut,
+  X,
+  Database
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,11 +26,17 @@ const ALL_LINKS = [
   { name: "Report Summarizer", href: "/summarizer", icon: FileText, access: "all" },
   { name: "Profile", href: "/profile", icon: User, access: "auth" },
   { name: "Admin Setup", href: "/admin", icon: Settings, access: ["Admin"] },
+  { name: "Data Ingestion", href: "/admin/datasets", icon: Database, access: ["Admin"] },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const { role, isAuthenticated, currentUser, logout } = useAuth();
+  const { role, isAuthenticated, currentUser, isLoading } = useAuth();
 
   const sidebarLinks = ALL_LINKS.filter(link => {
     if (link.access === "all") return true;
@@ -38,17 +46,35 @@ export function Sidebar() {
   });
 
   return (
-    <div className="w-64 h-full bg-background/80 backdrop-blur-xl border-r border-border/40 flex flex-col z-40 fixed left-0 top-0">
-      <div className="h-16 flex items-center px-6 border-b border-border/40">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/50 group-hover:bg-primary/30 transition-colors">
-            <Activity className="w-5 h-5 text-primary" />
-          </div>
-          <span className="font-bold text-lg tracking-tight gradient-text">
-            Ingres Copilot
-          </span>
-        </Link>
-      </div>
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <div className={`w-64 h-full bg-background/80 backdrop-blur-xl border-r border-border/40 flex flex-col z-50 fixed left-0 top-0 transition-transform duration-300 ease-in-out ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } lg:translate-x-0`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-border/40 shrink-0">
+          <Link href="/" className="flex items-center gap-2 group" onClick={onClose}>
+            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/50 group-hover:bg-primary/30 transition-colors">
+              <Activity className="w-5 h-5 text-primary" />
+            </div>
+            <span className="font-bold text-lg tracking-tight gradient-text">
+              Ingres Copilot
+            </span>
+          </Link>
+          <button 
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
       <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
         {sidebarLinks.map((link) => {
@@ -56,14 +82,14 @@ export function Sidebar() {
           const Icon = link.icon;
           
           return (
-            <Link key={link.href} href={link.href} className="block">
+            <Link key={link.href} href={link.href} className="block" onClick={onClose}>
               <motion.div 
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   isActive 
                     ? "bg-primary/15 text-primary font-medium border border-primary/20" 
-                    : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
                 }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
@@ -75,8 +101,12 @@ export function Sidebar() {
       </div>
 
       <div className="p-4 border-t border-border/40">
-        {isAuthenticated ? (
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-background/50 border border-border/40 hover:bg-white/5 transition-colors group">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-2">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : isAuthenticated ? (
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-background/50 border border-border/40 hover:bg-black/5 transition-colors group">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 shrink-0">
               <User className="w-4 h-4 text-primary" />
             </div>
@@ -92,6 +122,7 @@ export function Sidebar() {
           </Link>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

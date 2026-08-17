@@ -8,6 +8,10 @@ from typing import List, Dict, Any
 from app.modules.documents.repository import DocumentRepository
 from app.modules.documents.schemas import DocumentCreate, DocumentMetadataSchema
 from app.core.rag import rag_core
+from app.core.config import settings
+from groq import AsyncGroq
+import random
+import json
 
 def get_file_hash(file_path: str) -> str:
     hasher = hashlib.sha256()
@@ -30,6 +34,17 @@ def chunk_text(text: str, chunk_size: int = 800, overlap: int = 150) -> List[str
 class DocumentService:
     def __init__(self):
         self.repository = DocumentRepository()
+        
+        # Load balancing Groq clients
+        keys = settings.groq_api_keys_list
+        if not keys and settings.GROQ_API_KEY:
+            keys = [settings.GROQ_API_KEY]
+        self.groq_clients = [AsyncGroq(api_key=k) for k in keys] if keys else []
+
+    def get_random_client(self):
+        if not self.groq_clients:
+            raise Exception("No Groq API keys configured")
+        return random.choice(self.groq_clients)
 
     async def ingest_pdf(self, file_path: str, filename: str) -> str:
         file_hash = get_file_hash(file_path)
@@ -177,3 +192,53 @@ class DocumentService:
         except Exception as e:
             await self.repository.update_document_status(doc_id, status="failed")
             return f"Failed: {str(e)}"
+            
+    async def summarize_document(self, file_path: str, filename: str) -> Dict[str, Any]:
+        try:
+            # 1. Extract Text
+            text_content = ""
+            if file_path.endswith(".pdf"):
+                doc = fitz.open(file_path)
+                for page in doc:
+                    text_content += page.get_text() + "\n"
+            elif file_path.endswith(".csv"):
+                df = pd.read_csv(file_path)
+                text_content = df.to_csv(index=False)
+            
+            # 2. Truncate text to avoid blowing up context window (roughly first 25k chars)
+            text_content = text_content[:25000]
+            
+            # 3. Call Groq
+            prompt = f"""
+You are an expert hydrogeologist analyst. Summarize the following document content.
+Return the result strictly as a JSON object with this exact structure (no markdown wrapper, just raw JSON):
+{{
+    "summary": "A cohesive 2-3 sentence executive summary of the document.",
+    "insights": [
+        {{ "text": "Insight description 1", "type": "warning" }},
+        {{ "text": "Insight description 2", "type": "info" }},
+        {{ "text": "Insight description 3", "type": "danger" }},
+        {{ "text": "Insight description 4", "type": "success" }}
+    ]
+}}
+Ensure 'type' is only one of: warning, info, danger, success.
+Here is the document content:
+{text_content}
+"""
+            client = self.get_random_client()
+            res = await client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama-3.3-70b-versatile",
+                temperature=0.2,
+                response_format={"type": "json_object"}
+            )
+            
+            raw_response = res.choices[0].message.content
+            parsed = json.loads(raw_response)
+            return parsed
+            
+        except Exception as e:
+            import logging
+            logging.error(f"Failed to summarize document: {e}")
+            raise Exception(f"Summarization failed: {e}")
+

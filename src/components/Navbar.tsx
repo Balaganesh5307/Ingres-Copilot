@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, isLoading } = useAuth();
 
   return (
     <motion.header 
@@ -20,7 +20,7 @@ export function Navbar() {
           <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/50 group-hover:bg-primary/30 transition-colors">
             <Activity className="w-5 h-5 text-primary" />
           </div>
-          <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+          <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
             Ingres Copilot
           </span>
         </Link>
@@ -32,26 +32,30 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
-          {isAuthenticated ? (
+          {isLoading ? (
+            <div className="flex items-center gap-4 opacity-50 pointer-events-none">
+              <Button variant="ghost" className="text-muted-foreground">Loading...</Button>
+            </div>
+          ) : isAuthenticated ? (
             <>
               <Link href="/dashboard">
-                <Button variant="ghost" className="text-muted-foreground hover:text-white">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                   Dashboard
                 </Button>
               </Link>
-              <Button onClick={logout} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
+              <Button onClick={logout} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-md">
                 Log out
               </Button>
             </>
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost" className="text-muted-foreground hover:text-white">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                   Log in
                 </Button>
               </Link>
               <Link href="/register">
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(0,0,0,0.3)]">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-md">
                   Get Started
                 </Button>
               </Link>

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = '["http://localhost:3000"]'
     
     GROQ_API_KEY: str = ""
+    GROQ_API_KEYS: str = ""
     GEMINI_API_KEY: str = ""
     
     CHROMA_DB_PATH: str = "./chroma_db"
@@ -21,6 +22,11 @@ class Settings(BaseSettings):
     @property
     def cors_origins_list(self) -> List[str]:
         return json.loads(self.CORS_ORIGINS)
+        
+    @property
+    def groq_api_keys_list(self) -> List[str]:
+        keys = self.GROQ_API_KEYS.split(",")
+        return [k.strip() for k in keys if k.strip()]
 
     model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
 

@@ -33,3 +33,6 @@ class ConversationCreate(BaseModel):
 class MessageCreate(BaseModel):
     conversationId: str
     content: str
+
+class ConversationUpdate(BaseModel):
+    title: str

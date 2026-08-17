@@ -74,16 +74,16 @@ export default function ProfilePage() {
         
         {/* Left Column: User Info */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, type: "spring" }} className="lg:col-span-1 space-y-8">
-          <Card className="glass-card border-white/5 text-center pt-8 overflow-hidden relative shadow-xl">
+          <Card className="glass-card border-slate-200/60 text-center pt-8 overflow-hidden relative shadow-xl">
             <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary/10 to-transparent border-b border-primary/5" />
             <CardContent className="flex flex-col items-center relative z-10 pt-4">
               <div className="relative mb-6">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary to-cyan-500 rounded-full blur opacity-40" />
-                <Avatar className="w-28 h-28 border-4 border-[#0a0a0a] relative shadow-2xl bg-black">
+                <Avatar className="w-28 h-28 border-4 border-white relative shadow-2xl bg-slate-100">
                   <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${currentUser.email}&backgroundColor=transparent`} className="p-2" />
-                  <AvatarFallback className="bg-black/50"><User className="w-12 h-12 text-muted-foreground" /></AvatarFallback>
+                  <AvatarFallback className="bg-slate-200"><User className="w-12 h-12 text-muted-foreground" /></AvatarFallback>
                 </Avatar>
-                <div className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-[#0a0a0a] shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                <div className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
               </div>
               
               <h2 className="text-2xl font-bold tracking-tight">{currentUser.name || "Unknown User"}</h2>
@@ -98,15 +98,15 @@ export default function ProfilePage() {
               </div>
               
               <div className="w-full mt-8 space-y-4 text-sm text-left px-2">
-                <div className="flex items-center gap-4 text-muted-foreground bg-white/5 p-3 rounded-xl border border-white/5">
-                  <div className="p-2 rounded-lg bg-white/5 text-foreground"><Mail className="w-4 h-4" /></div>
+                <div className="flex items-center gap-4 text-muted-foreground bg-black/5 p-3 rounded-xl border border-border/20">
+                  <div className="p-2 rounded-lg bg-black/10 text-foreground"><Mail className="w-4 h-4" /></div>
                   <div className="flex flex-col">
                     <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Email Address</span>
                     <span className="text-foreground font-medium">{currentUser.email}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-muted-foreground bg-white/5 p-3 rounded-xl border border-white/5">
-                  <div className="p-2 rounded-lg bg-white/5 text-foreground"><Clock className="w-4 h-4" /></div>
+                <div className="flex items-center gap-4 text-muted-foreground bg-black/5 p-3 rounded-xl border border-border/20">
+                  <div className="p-2 rounded-lg bg-black/10 text-foreground"><Clock className="w-4 h-4" /></div>
                   <div className="flex flex-col">
                     <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Member Since</span>
                     <span className="text-foreground font-medium">{currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "Recently joined"}</span>
@@ -125,8 +125,8 @@ export default function ProfilePage() {
         <div className="lg:col-span-2 space-y-8">
           
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1, type: "spring" }}>
-            <Card className="glass-card border-white/5 shadow-xl">
-              <CardHeader className="border-b border-white/5 pb-4">
+            <Card className="glass-card border-slate-200/60 shadow-xl">
+              <CardHeader className="border-b border-border/20 pb-4">
                 <CardTitle className="text-xl flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                     <Activity className="w-5 h-5" />
@@ -135,10 +135,10 @@ export default function ProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
-                <div className="relative border-l-2 border-white/10 ml-4 space-y-8 pl-8 pb-4">
+                <div className="relative border-l-2 border-border/20 ml-4 space-y-8 pl-8 pb-4">
                   {(showAllLogs ? [...activityHistory, ...moreLogs] : activityHistory).map((item, i) => (
                     <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + (i * 0.1) }} key={i} className="relative group">
-                      <div className={`absolute -left-[41px] top-1 w-4 h-4 rounded-full ring-4 ring-[#0a0a0a] group-hover:scale-125 transition-transform ${
+                      <div className={`absolute -left-[41px] top-1 w-4 h-4 rounded-full ring-4 ring-white group-hover:scale-125 transition-transform ${
                         item.type === 'document' ? 'bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.8)]' :
                         item.type === 'ai' ? 'bg-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.8)]' :
                         item.type === 'security' ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]' :
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     </motion.div>
                   ))}
                 </div>
-                <Button onClick={handleAuditClick} disabled={showAllLogs || isLogging} variant="outline" className="w-full mt-4 h-11 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-foreground transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <Button onClick={handleAuditClick} disabled={showAllLogs || isLogging} variant="outline" className="w-full mt-4 h-11 rounded-xl border-border/20 bg-black/5 hover:bg-black/10 text-foreground transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   {isLogging ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading Logs...</> : showAllLogs ? "All Logs Loaded" : "View Comprehensive Audit Log"}
                 </Button>
               </CardContent>
@@ -158,8 +158,8 @@ export default function ProfilePage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2, type: "spring" }}>
-            <Card className="glass-card border-white/5 shadow-xl">
-              <CardHeader className="border-b border-white/5 pb-4">
+            <Card className="glass-card border-slate-200/60 shadow-xl">
+              <CardHeader className="border-b border-border/20 pb-4">
                 <CardTitle className="text-xl flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
                     <Settings className="w-5 h-5" />
@@ -174,9 +174,9 @@ export default function ProfilePage() {
                   { title: "Critical Alerts", desc: "Immediate SMS notifications for severe aquifer depletion", icon: Bell, active: true },
                   { title: "Forced Dark Mode", desc: "System appearance is locked to dark mode for optimal contrast", icon: Clock, active: true }
                 ].map((setting, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-black/5 border border-border/20 hover:bg-black/10 transition-colors">
                     <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-lg bg-black/40 text-muted-foreground border border-white/5">
+                      <div className="p-2 rounded-lg bg-black/10 text-muted-foreground border border-border/20">
                         <setting.icon className="w-5 h-5" />
                       </div>
                       <div>
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                         <p className="text-sm text-muted-foreground mt-1">{setting.desc}</p>
                       </div>
                     </div>
-                    <div className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors ${setting.active ? 'bg-primary' : 'bg-white/10'}`}>
+                    <div className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors ${setting.active ? 'bg-primary' : 'bg-black/20'}`}>
                       <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${setting.active ? 'right-1' : 'left-1 opacity-50'}`} />
                     </div>
                   </div>
