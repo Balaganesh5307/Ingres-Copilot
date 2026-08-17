@@ -49,47 +49,26 @@
 }
 
 :root {
-  --background: oklch(0.98 0.02 250);
-  --foreground: oklch(0.15 0.05 250);
+  --background: oklch(0.98 0.01 250);
+  --foreground: oklch(0.12 0.015 255);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.05 250);
+  --card-foreground: oklch(0.12 0.015 255);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.05 250);
-  --primary: oklch(0.5 0.25 255); /* Deep rich blue/teal */
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.95 0.04 250);
-  --secondary-foreground: oklch(0.2 0.05 250);
-  --muted: oklch(0.95 0.02 250);
-  --muted-foreground: oklch(0.45 0.05 250);
-  --accent: oklch(0.95 0.05 250);
-  --accent-foreground: oklch(0.2 0.05 250);
+  --popover-foreground: oklch(0.12 0.015 255);
+  --primary: oklch(0.55 0.15 255); /* Elegant blue */
+  --primary-foreground: oklch(0.98 0.01 255);
+  --secondary: oklch(0.96 0.02 250);
+  --secondary-foreground: oklch(0.2 0.03 255);
+  --muted: oklch(0.96 0.02 250);
+  --muted-foreground: oklch(0.4 0.03 255);
+  --accent: oklch(0.94 0.03 250);
+  --accent-foreground: oklch(0.12 0.015 255);
   --destructive: oklch(0.6 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.9 0.02 250);
   --input: oklch(0.9 0.02 250);
-  --ring: oklch(0.5 0.25 255);
+  --ring: oklch(0.55 0.15 255);
   --radius: 1rem;
-}
-
-.dark {
-  /* Ultra premium dark theme */
-  --background: oklch(0.12 0.015 255);
-  --foreground: oklch(0.98 0.01 255);
-  --card: oklch(0.16 0.02 255);
-  --card-foreground: oklch(0.98 0.01 255);
-  --popover: oklch(0.16 0.02 255);
-  --popover-foreground: oklch(0.98 0.01 255);
-  --primary: oklch(0.75 0.15 255); /* Luminous cyan/blue */
-  --primary-foreground: oklch(0.12 0.015 255);
-  --secondary: oklch(0.2 0.03 255);
-  --secondary-foreground: oklch(0.98 0.01 255);
-  --muted: oklch(0.2 0.03 255);
-  --muted-foreground: oklch(0.7 0.02 255);
-  --accent: oklch(0.25 0.05 255);
-  --accent-foreground: oklch(0.98 0.01 255);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(0.22 0.03 255);
-  --input: oklch(0.22 0.03 255);
-  --ring: oklch(0.75 0.15 255);
 }
 
 @layer base {
@@ -97,7 +76,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background;
+    @apply bg-background text-foreground bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-50/50 via-background to-background;
     min-height: 100vh;
   }
   html {
@@ -107,10 +86,10 @@
 
 @layer utilities {
   .glass {
-    @apply bg-background/50 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+    @apply bg-white/70 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)];
   }
   .glass-card {
-    @apply bg-card/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_32px_rgba(var(--primary),0.15)] hover:border-primary/30 transition-all duration-300;
+    @apply bg-white/80 backdrop-blur-2xl border border-slate-200/80 shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_32px_rgba(var(--primary),0.08)] hover:border-primary/20 transition-all duration-300;
   }
   .gradient-text {
     @apply bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent;

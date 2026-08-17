@@ -80,7 +80,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="#architecture">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 border-border hover:bg-white/5">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 border-border hover:bg-black/5">
                 View Architecture
               </Button>
             </Link>
@@ -201,7 +201,7 @@ export default function LandingPage() {
               Join leading environmental agencies relying on Ingres Copilot.
             </p>
             <Link href="/register">
-              <Button size="lg" className="h-16 px-10 text-lg bg-white text-black hover:bg-white/90 transition-transform hover:scale-105 shadow-xl">
+              <Button size="lg" className="h-16 px-10 text-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-105 shadow-xl">
                 Deploy Copilot Today
               </Button>
             </Link>

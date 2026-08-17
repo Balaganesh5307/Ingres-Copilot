@@ -21,10 +21,12 @@ class AnalyticsService:
             "missingMetrics": ["annualRecharge", "annualExtraction", "stageOfExtraction", "category"]
         }
 
-    async def get_rankings(self, level: str, year: Optional[str] = None) -> List[Dict[str, Any]]:
+    async def get_rankings(self, level: str, year: Optional[str] = None, state: Optional[str] = None) -> List[Dict[str, Any]]:
         match_stage = {"type": level}
         if year:
             match_stage["year"] = year
+        if state:
+            match_stage["state"] = {"$regex": f"^{state}$", "$options": "i"}
 
         if level == "state":
             # Rank by extractable_bcm
@@ -226,4 +228,94 @@ class AnalyticsService:
             "districts": districts
         }
 
+    async def get_assessment_units(self, state: Optional[str] = None, district: Optional[str] = None, category: Optional[str] = None, limit: int = 15) -> List[Dict[str, Any]]:
+        match_stage = {}
+        if state:
+            match_stage["State Name"] = {"$regex": f"^{state}$", "$options": "i"}
+        if district:
+            match_stage["District Name"] = {"$regex": f"^{district}$", "$options": "i"}
+        if category:
+            match_stage["Categorization"] = {"$regex": f"^{category}$", "$options": "i"}
+            
+        pipeline = [
+            {"$match": match_stage},
+            {"$sort": {"Stage of Ground Water Extraction (%)": -1}},
+            {"$limit": limit},
+            {"$project": {
+                "_id": 0,
+                "State Name": 1,
+                "District Name": 1,
+                "Name of Assessment Unit": 1,
+                "Categorization": 1,
+                "Stage of Ground Water Extraction (%)": 1,
+                "Total Annual Ground Water Extraction": 1,
+                "Annual Extractable Ground Water Resource": 1
+            }}
+        ]
+        
+        results = await self.assessments_collection.aggregate(pipeline).to_list(limit)
+        return results
 
+    async def get_comparison(self, entities: List[Any], entity_type: str, target_region: Optional[str] = None, year: Optional[int] = None) -> Dict[str, Any]:
+        """
+        Compare multiple entities. entity_type can be "state", "district", or "year".
+        Returns formatted structure for comparison engine.
+        """
+        comparison_results = []
+        
+        for entity in entities:
+            match_stage = {}
+            if entity_type == "state":
+                match_stage["state"] = {"$regex": f"^{entity}$", "$options": "i"}
+                if year:
+                    match_stage["assessmentYear"] = year
+            elif entity_type == "district":
+                match_stage["district"] = {"$regex": f"^{entity}$", "$options": "i"}
+                if year:
+                    match_stage["assessmentYear"] = year
+            elif entity_type == "year":
+                match_stage["assessmentYear"] = int(entity)
+                if target_region:
+                    match_stage["$or"] = [
+                        {"state": {"$regex": f"^{target_region}$", "$options": "i"}},
+                        {"district": {"$regex": f"^{target_region}$", "$options": "i"}}
+                    ]
+
+            pipeline = [
+                {"$match": match_stage},
+                {"$group": {
+                    "_id": "$category",
+                    "count": {"$sum": 1},
+                    "maxYear": {"$max": "$assessmentYear"}
+                }}
+            ]
+            
+            results = await self.assessments_collection.aggregate(pipeline).to_list(1000)
+            
+            if results:
+                total_units = sum(r["count"] for r in results)
+                category_counts = {}
+                max_year = None
+                for r in results:
+                    cat = r["_id"]
+                    if cat:
+                        category_counts[cat] = r["count"]
+                    if r.get("maxYear"):
+                        if max_year is None or r["maxYear"] > max_year:
+                            max_year = r["maxYear"]
+                
+                # Format name based on entity type to be highly readable for UI
+                name = str(entity)
+                if entity_type == "year" and target_region:
+                    name = f"{target_region} ({entity})"
+                elif year:
+                    name = f"{entity} ({year})"
+                    
+                comparison_results.append({
+                    "name": name,
+                    "assessmentYear": year or max_year or 2025,
+                    "totalAssessmentUnits": total_units,
+                    "categoryCounts": category_counts
+                })
+        
+        return {"comparison": comparison_results}

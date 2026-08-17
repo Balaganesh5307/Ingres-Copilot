@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, FileText, Server, ShieldAlert, CheckCircle2, MoreHorizontal, Shield, UploadCloud, Loader2, Plus, X } from "lucide-react";
+import { Users, Server, ShieldAlert, CheckCircle2, MoreHorizontal, Shield, Loader2, Plus, X } from "lucide-react";
 
 const initialUsers = [
   { id: "U-1001", name: "Demo Admin", email: "admin@demo.com", role: "Admin", status: "Active" },
@@ -109,14 +109,13 @@ export default function AdminDashboardPage() {
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
         
         {/* System Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {[
             { title: "Total Users", value: (1200 + users.length).toLocaleString(), icon: <Users className="w-6 h-6 text-blue-400" />, desc: "+12 pending approvals", color: "blue" },
-            { title: "Documents Processed", value: "8,492", icon: <FileText className="w-6 h-6 text-emerald-400" />, desc: "99.8% success rate", color: "emerald" },
             { title: "System Health", value: "Optimal", icon: <Server className="w-6 h-6 text-primary" />, desc: "All APIs operational", color: "primary" },
           ].map((stat, i) => (
             <motion.div key={i} variants={itemVariants}>
-              <Card className="glass-card border-white/5 shadow-lg relative overflow-hidden group">
+              <Card className="glass-card border-slate-200/60 shadow-lg relative overflow-hidden group">
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-${stat.color}-500/10 rounded-full blur-3xl group-hover:bg-${stat.color}-500/20 transition-colors duration-500`} />
                 <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
                   <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{stat.title}</CardTitle>
@@ -133,11 +132,11 @@ export default function AdminDashboardPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* User Management Table */}
           <motion.div variants={itemVariants} className="flex flex-col">
-            <Card className="glass-card border-white/5 shadow-xl h-full flex flex-col relative overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between border-b border-white/5 pb-4 bg-primary/5">
+            <Card className="glass-card border-slate-200/60 shadow-xl h-full flex flex-col relative overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between border-b border-border/20 pb-4 bg-primary/5">
                 <div>
                   <CardTitle className="text-xl flex items-center gap-2 text-primary">
                     <Users className="w-5 h-5" /> User Management
@@ -158,25 +157,25 @@ export default function AdminDashboardPage() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden border-b border-white/5 bg-black/40"
+                      className="overflow-hidden border-b border-border/20 bg-black/5"
                     >
                       <form onSubmit={handleAddUser} className="p-6 space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="name">Full Name</Label>
-                            <Input id="name" required value={newName} onChange={e => setNewName(e.target.value)} placeholder="Jane Doe" className="bg-white/5 border-white/10 text-white" />
+                            <Input id="name" required value={newName} onChange={e => setNewName(e.target.value)} placeholder="Jane Doe" className="bg-white border-slate-200/60 text-foreground" />
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="email">Email Address</Label>
-                            <Input id="email" type="email" required value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="jane@example.com" className="bg-white/5 border-white/10 text-white" />
+                            <Input id="email" type="email" required value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="jane@example.com" className="bg-white border-slate-200/60 text-foreground" />
                           </div>
                           <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="role">System Role</Label>
                             <Select value={newRole} onValueChange={(val) => val && setNewRole(val)}>
-                              <SelectTrigger className="bg-white/5 border-white/10 text-white w-full h-10">
+                              <SelectTrigger className="bg-white border-slate-200/60 text-foreground w-full h-10">
                                 <SelectValue placeholder="Select a role" />
                               </SelectTrigger>
-                              <SelectContent className="bg-[#0f172a] border-white/10 text-white">
+                              <SelectContent className="bg-white border-slate-200/60 text-foreground">
                                 <SelectItem value="Admin">Admin</SelectItem>
                                 <SelectItem value="Government Officer">Government Officer</SelectItem>
                                 <SelectItem value="Researcher">Researcher</SelectItem>
@@ -197,8 +196,8 @@ export default function AdminDashboardPage() {
 
                 <div className="overflow-auto flex-1 max-h-[400px]">
                   <Table>
-                    <TableHeader className="bg-black/20 sticky top-0 z-10 backdrop-blur-md">
-                      <TableRow className="border-white/5 hover:bg-transparent">
+                    <TableHeader className="bg-black/5 sticky top-0 z-10 backdrop-blur-md">
+                      <TableRow className="border-border/20 hover:bg-transparent">
                         <TableHead className="pl-6 font-semibold">User</TableHead>
                         <TableHead className="font-semibold">Role</TableHead>
                         <TableHead className="font-semibold">Status</TableHead>
@@ -213,7 +212,7 @@ export default function AdminDashboardPage() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="border-white/5 hover:bg-white/5 transition-colors border-b"
+                            className="border-border/20 hover:bg-black/5 transition-colors border-b"
                           >
                             <TableCell className="pl-6 py-4">
                               <div className="flex flex-col">
@@ -253,51 +252,6 @@ export default function AdminDashboardPage() {
                     </TableBody>
                   </Table>
                 </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Document Management Table */}
-          <motion.div variants={itemVariants}>
-            <Card className="glass-card border-white/5 shadow-xl h-full flex flex-col">
-              <CardHeader className="border-b border-white/5 pb-4 bg-primary/5">
-                <CardTitle className="text-xl flex items-center gap-2 text-primary">
-                  <UploadCloud className="w-5 h-5" /> Document Ingestion Logs
-                </CardTitle>
-                <CardDescription className="pt-1">Track the status of automated AI document parsing pipelines</CardDescription>
-              </CardHeader>
-              <CardContent className="p-0 flex-1">
-                <Table>
-                  <TableHeader className="bg-black/20">
-                    <TableRow className="border-white/5 hover:bg-transparent">
-                      <TableHead className="pl-6 font-semibold">Document</TableHead>
-                      <TableHead className="font-semibold">Date</TableHead>
-                      <TableHead className="text-right pr-6 font-semibold">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockDocs.map((doc) => (
-                      <TableRow key={doc.id} className="border-white/5 hover:bg-white/5 transition-colors">
-                        <TableCell className="pl-6">
-                          <div className="flex flex-col">
-                            <span className="font-semibold text-primary hover:underline cursor-pointer truncate max-w-[200px] sm:max-w-[300px]">{doc.name}</span>
-                            <span className="text-xs text-muted-foreground mt-0.5">By {doc.uploader} • {doc.id}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground font-medium text-sm">{doc.date}</TableCell>
-                        <TableCell className="text-right pr-6">
-                          <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider border shadow-sm min-w-[90px] text-center ${
-                            doc.status === 'Processed' ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10 shadow-[0_0_10px_rgba(16,185,129,0.1)]' :
-                            doc.status === 'Processing' ? 'text-blue-400 border-blue-500/30 bg-blue-500/10 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.1)]' :
-                            'text-red-400 border-red-500/30 bg-red-500/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]'
-                          }`}>
-                            {doc.status}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
               </CardContent>
             </Card>
           </motion.div>

@@ -31,3 +31,22 @@ class ChatRepository:
     async def list_conversations(self, user_id: str) -> List[Dict[str, Any]]:
         cursor = self.conversations.find({"userId": user_id}).sort("updatedAt", -1)
         return await cursor.to_list(length=100)
+
+    async def delete_conversation(self, conversation_id: str) -> bool:
+        from bson import ObjectId
+        try:
+            result = await self.conversations.delete_one({"_id": ObjectId(conversation_id)})
+            return result.deleted_count > 0
+        except Exception:
+            return False
+
+    async def update_conversation_title(self, conversation_id: str, new_title: str) -> bool:
+        from bson import ObjectId
+        try:
+            result = await self.conversations.update_one(
+                {"_id": ObjectId(conversation_id)},
+                {"$set": {"title": new_title, "updatedAt": datetime.utcnow()}}
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False

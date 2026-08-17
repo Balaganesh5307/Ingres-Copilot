@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchMe = async (token?: string) => {
     try {
-      const headers: any = {};
+      const headers: Record<string, string> = {};
       if (token) {
         headers["Authorization"] = `Bearer ${token}`;
       } else {
@@ -58,26 +58,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error("Invalid session");
       }
-    } catch (err) {
-      const storedToken = localStorage.getItem("accessToken");
-      if (storedToken === "mock-admin-token") {
-        setCurrentUser({ id: "1", name: "Demo Admin", email: "admin@ingres.gov", role: "Admin" });
-      } else if (storedToken === "mock-researcher-token") {
-        setCurrentUser({ id: "2", name: "Demo Researcher", email: "researcher@ingres.gov", role: "Researcher" });
-      } else if (storedToken === "mock-gov-token") {
-        setCurrentUser({ id: "3", name: "Gov Officer", email: "officer@ingres.gov", role: "Government Officer" });
-      } else if (storedToken === "mock-public-token") {
-        setCurrentUser({ id: "4", name: "Public User", email: "user@ingres.gov", role: "Public User" });
-      } else {
-        setCurrentUser(null);
-        localStorage.removeItem("accessToken");
-      }
+    } catch {
+      setCurrentUser(null);
+      localStorage.removeItem("accessToken");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMe();
   }, []);
 
@@ -92,8 +82,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetch("http://127.0.0.1:8000/api/v1/auth/logout", {
         method: "POST",
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
+      console.error("Logout failed");
     }
     localStorage.removeItem("accessToken");
     setCurrentUser(null);
@@ -112,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error("Refresh failed");
       }
-    } catch (e) {
+    } catch {
       setCurrentUser(null);
       localStorage.removeItem("accessToken");
     }

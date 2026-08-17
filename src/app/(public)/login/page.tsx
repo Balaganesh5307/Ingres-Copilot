@@ -12,8 +12,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login: contextLogin, logout } = useAuth();
+  const { login: contextLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -49,8 +48,12 @@ export default function LoginPage() {
         email,
         role: data.role
       });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -60,14 +63,8 @@ export default function LoginPage() {
     setDemoLoading(role);
     setError("");
     
-    if (role === "Public") {
-      // Public / Guest mode bypasses auth entirely
-      await logout();
-      router.push("/dashboard");
-      return;
-    }
-
     let demoEmail = "";
+    if (role === "Public") demoEmail = "public@demo.com";
     if (role === "Researcher") demoEmail = "researcher@demo.com";
     if (role === "Government Officer") demoEmail = "gov@demo.com";
     if (role === "Admin") demoEmail = "admin@demo.com";
@@ -88,7 +85,7 @@ export default function LoginPage() {
         email: demoEmail,
         role: data.role
       });
-    } catch (err: any) {
+    } catch {
       setError("Failed to load demo account. Ensure seed_demo_users.py was run.");
       setDemoLoading("");
     }

@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Info, Loader2, ChevronDown, ChevronRight, Navigation, Database } from "lucide-react";
+import { MapPin, Info, Loader2, ChevronDown, ChevronRight, Navigation, Database, FilterX } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import { useSearchParams, useRouter } from "next/navigation";
 import "leaflet/dist/leaflet.css";
 
 import { ComponentType } from "react";
@@ -36,7 +37,19 @@ export default function MapPage() {
   const [districtLoading, setDistrictLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
+  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  const queryState = searchParams.get("state");
+  const queryCategory = searchParams.get("category");
 
+  useEffect(() => {
+    if (queryState) {
+      setSelectedState(queryState);
+    }
+  }, [queryState]);
+  
   useEffect(() => {
     async function loadData() {
       try {
@@ -92,20 +105,31 @@ export default function MapPage() {
     const stats = getStateStats(stateName);
     
     let color = "#1e293b"; // Darker blue-gray for no data
+    let matchesCategoryFilter = true;
+    
     if (stats && stats.dominantCategory) {
       const legend = legendItems.find(l => l.label === stats.dominantCategory);
       if (legend) color = legend.hex;
+      
+      if (queryCategory) {
+         matchesCategoryFilter = stats.dominantCategory.toLowerCase() === queryCategory.toLowerCase();
+         if (!matchesCategoryFilter) {
+           color = "#1e293b"; // Dim non-matching states
+         }
+      }
+    } else if (queryCategory) {
+      matchesCategoryFilter = false;
     }
 
     const isSelected = selectedState === stateName;
 
     return {
       fillColor: color,
-      weight: isSelected ? 3 : 1.5,
+      weight: isSelected ? 3 : (queryCategory && matchesCategoryFilter ? 2 : 1.5),
       opacity: 1,
-      color: isSelected ? "#06b6d4" : "#ffffff40",
+      color: isSelected ? "#06b6d4" : (queryCategory && matchesCategoryFilter ? "#ffffff" : "#ffffff40"),
       dashArray: isSelected ? "" : "4 4",
-      fillOpacity: isSelected ? 0.9 : 0.6
+      fillOpacity: isSelected ? 0.9 : (queryCategory && matchesCategoryFilter ? 0.8 : 0.4)
     };
   };
 
@@ -159,9 +183,21 @@ export default function MapPage() {
 
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight gradient-text mb-2">Interactive Map</h1>
+          <h1 className="text-4xl font-bold tracking-tight gradient-text mb-2 flex items-center gap-4">
+            Interactive Map
+            {queryCategory && (
+              <span className="text-sm font-semibold tracking-wide px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full flex items-center shadow-lg">
+                Filtered: {queryCategory}
+              </span>
+            )}
+          </h1>
           <p className="text-muted-foreground">Geospatial analysis of groundwater extraction and health.</p>
         </div>
+        {queryCategory && (
+          <Button variant="outline" size="sm" onClick={() => router.push('/map')} className="text-xs border-border/30 hover:bg-black/5">
+            <FilterX className="w-4 h-4 mr-2" /> Clear Filter
+          </Button>
+        )}
       </div>
 
       {loading ? (
@@ -189,9 +225,9 @@ export default function MapPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-6 flex-1 min-h-0">
           
           {/* Left Panel: State Selection */}
-          <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-4">
-            <Card className="glass-card border-white/5 flex-1 flex flex-col shadow-xl">
-              <CardHeader className="pb-3 border-b border-white/5">
+          <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-4 h-[300px] lg:h-auto order-2 lg:order-1">
+            <Card className="glass-card border-slate-200/60 flex-1 flex flex-col shadow-xl">
+              <CardHeader className="pb-3 border-b border-border/20">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-primary" /> Regions
                 </CardTitle>
@@ -241,15 +277,15 @@ export default function MapPage() {
           </div>
 
           {/* Center Panel: The Map */}
-          <div className="lg:col-span-2 xl:col-span-3 flex flex-col gap-4 relative z-0">
-            <Card className="glass-card border-white/5 flex-1 relative overflow-hidden flex flex-col rounded-2xl shadow-2xl p-1">
-              <div className="flex-1 w-full h-full min-h-[500px] z-0 rounded-xl overflow-hidden relative border border-white/5 shadow-inner">
+          <div className="lg:col-span-2 xl:col-span-3 flex flex-col gap-4 relative z-0 order-1 lg:order-2 h-[500px] lg:h-auto">
+            <Card className="glass-card border-slate-200/60 flex-1 relative overflow-hidden flex flex-col rounded-2xl shadow-2xl p-1">
+              <div className="flex-1 w-full h-full min-h-[500px] z-0 rounded-xl overflow-hidden relative border border-slate-200/60 shadow-inner">
                 {/* Ensure CSR only map rendering */}
                 {typeof window !== "undefined" && (
-                  <MapContainer center={[22.5937, 78.9629]} zoom={4.5} scrollWheelZoom={true} className="w-full h-full bg-[#020617] z-0 custom-leaflet-container">
+                  <MapContainer center={[22.5937, 78.9629]} zoom={4.5} scrollWheelZoom={true} className="w-full h-full bg-white/10 z-0 custom-leaflet-container">
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
+                      url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
                       className="map-tiles-filter"
                     />
                     {geoJsonData && (
@@ -266,7 +302,7 @@ export default function MapPage() {
               </div>
               
               {/* Legend inside map view */}
-              <div className="absolute bottom-6 left-6 p-4 rounded-2xl glass border border-white/10 z-[1000] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+              <div className="absolute bottom-6 left-6 p-4 rounded-2xl glass border border-slate-200/60 z-[1000] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl">
                 <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">Groundwater Status</h4>
                 <div className="flex flex-col gap-2.5">
                   {legendItems.map((item, i) => (
@@ -281,9 +317,9 @@ export default function MapPage() {
           </div>
 
           {/* Right Panel: District Details */}
-          <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-4 relative z-10">
-            <Card className="glass-card border-white/5 flex-1 flex flex-col shadow-xl">
-              <CardHeader className="pb-3 border-b border-white/5 bg-primary/5">
+          <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-4 relative z-10 order-3 h-[400px] lg:h-auto">
+            <Card className="glass-card border-slate-200/60 flex-1 flex flex-col shadow-xl">
+              <CardHeader className="pb-3 border-b border-border/20 bg-primary/5">
                 <CardTitle className="text-lg flex items-center gap-2 text-primary">
                   {selectedState ? selectedState : "State Details"} <Info className="w-4 h-4 ml-auto opacity-50" />
                 </CardTitle>
@@ -336,7 +372,7 @@ export default function MapPage() {
                       <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 mt-6 px-1">District Breakdown</div>
                       <div className="space-y-2.5">
                         {districtData.map((dist, i) => (
-                          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} key={i} className="rounded-xl border border-white/5 bg-background/40 hover:bg-white/5 hover:border-white/10 transition-all duration-300 overflow-hidden shadow-md">
+                          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} key={i} className="rounded-xl border border-slate-200/60 bg-background/40 hover:bg-black/5 hover:border-slate-300 transition-all duration-300 overflow-hidden shadow-md">
                             
                             {/* District Header (Clickable) */}
                             <div 
@@ -345,7 +381,7 @@ export default function MapPage() {
                             >
                               <div className="flex justify-between items-start mb-2">
                                 <span className="font-semibold text-[15px] flex items-center gap-2">
-                                  <div className={`w-6 h-6 rounded-md flex items-center justify-center transition-colors ${expandedDistrict === dist.district ? 'bg-primary text-primary-foreground' : 'bg-white/5 text-muted-foreground'}`}>
+                                  <div className={`w-6 h-6 rounded-md flex items-center justify-center transition-colors ${expandedDistrict === dist.district ? 'bg-primary text-primary-foreground' : 'bg-black/5 text-muted-foreground'}`}>
                                     {expandedDistrict === dist.district ? <ChevronDown className="w-4 h-4"/> : <ChevronRight className="w-4 h-4"/>}
                                   </div>
                                   {dist.district}
@@ -367,14 +403,14 @@ export default function MapPage() {
 
                             {/* Assessment Units Expanded Details */}
                             {expandedDistrict === dist.district && (
-                              <div className="p-3 pt-0 border-t border-white/5 bg-black/20 backdrop-blur-sm">
+                              <div className="p-3 pt-0 border-t border-border/20 bg-black/5 backdrop-blur-sm">
                                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-2 mt-3 flex items-center gap-2">
-                                   <div className="h-px bg-white/5 flex-1"/> Units <div className="h-px bg-white/5 flex-1"/>
+                                   <div className="h-px bg-black/10 flex-1"/> Units <div className="h-px bg-black/10 flex-1"/>
                                  </div>
                                  <div className="space-y-2">
                                    {dist.assessmentUnits && dist.assessmentUnits.map((unit: any, idx: number) => (
-                                     <div key={idx} className="bg-white/5 rounded-lg p-3 border border-white/5 text-xs shadow-inner">
-                                       <div className="font-bold text-primary/90 mb-2 pb-2 border-b border-white/5 text-[13px]">{unit.assessmentUnit}</div>
+                                     <div key={idx} className="bg-white/50 rounded-lg p-3 border border-slate-200/60 text-xs shadow-inner">
+                                       <div className="font-bold text-primary/90 mb-2 pb-2 border-b border-border/20 text-[13px]">{unit.assessmentUnit}</div>
                                        <div className="space-y-1.5">
                                          <div className="flex justify-between items-center">
                                            <span className="text-muted-foreground">Category</span>
